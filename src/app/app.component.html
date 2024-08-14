@@ -1,4 +1,12 @@
-<div class="circle">
+<div class="timer-container">
+  <mat-progress-spinner
+    class="circle"
+    [value]="progress"
+    [strokeWidth]="5"
+    mode="determinate"
+    color="primary"
+  >
+  </mat-progress-spinner>
   <div class="timer-text">
     <div>{{ minutes }}:{{ seconds }}</div>
     <div>FOCUS</div>
