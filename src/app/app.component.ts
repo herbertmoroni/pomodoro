@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {ProgressSpinnerMode, MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  timeLeft: number = 1500; // 25 minutes in seconds
+  timeLeft: number = 100; // 25 minutes in seconds
   interval: any;
   progress: number = 0;
 
@@ -36,4 +36,8 @@ export class AppComponent {
   get seconds(): string {
     return (this.timeLeft % 60).toString().padStart(2, '0');
   }
+
+
+  mode: ProgressSpinnerMode = 'determinate';
+
 }
