@@ -1,22 +1,20 @@
-<div class="timer-container">
-  <mat-progress-spinner
-    class="circle"
-    [value]="progress"
-    [strokeWidth]="5"
-    mode="determinate"
-    color="primary"
-  >
-  </mat-progress-spinner>
-  <div class="timer-text">
-    <div>{{ minutes }}:{{ seconds }}</div>
-    <div>FOCUS</div>
-  </div>
+<mat-progress-spinner 
+  class="timer" 
+  [mode]="mode" 
+  [value]="progress" 
+  diameter="250"
+  color="primary">
+</mat-progress-spinner>
+
+<div class="timer-text">
+  <div>{{ minutes }}:{{ seconds }}</div>
+  <div>FOCUS</div>
 </div>
 
-
-
-    <mat-progress-spinner
-        class="example-margin"
-        [mode]="mode"
-        [value]="progress">
-    </mat-progress-spinner>
+<div class="timer-controls">
+  <button mat-raised-button color="primary" (click)="startTimer()">Start</button>
+  <button mat-raised-button color="primary" (click)="pauseTimer()">Pause</button>
+  <button mat-raised-button color="primary" (click)="resumeTimer()">Resume</button>
+  <button mat-raised-button color="warn" (click)="stopTimer()">Stop</button>
+  <button mat-raised-button color="accent" (click)="resetTimer()">Reset</button>
+</div>
