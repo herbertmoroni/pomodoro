@@ -4,18 +4,31 @@
   align-items: center;
 }
 
+.timer-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+.custom-spinner {
+  position: absolute;
+}
+.custom-spinner ::ng-deep circle {
+  stroke: yellow;  /* Blue color for completed portion */
+}
+.custom-spinner ::ng-deep circle:nth-child(2) {
+  stroke: blue;  /* Light gray for remaining portion */
+}
 .timer-display {
   position: absolute;
-  font-size: 2em;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  top: -120px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 24px;
 }
-
 .focus-label {
-  font-size: 0.5em;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
 .controls {
