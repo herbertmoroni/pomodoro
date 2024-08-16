@@ -1,63 +1,74 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ProgressSpinnerMode, MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { interval, Subscription } from 'rxjs';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatProgressSpinnerModule],
+  imports: [RouterOutlet, MatProgressSpinnerModule,MatIconModule,MatButtonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  timeLeft: number = 1500; // 25 minutes in seconds
-  interval: any;
-  progress: number = 0;
+  color: string = 'primary';
+  totalTime = 25 * 60; // 25 minutes in seconds
+  currentTime = this.totalTime;
+  progress = 100;
+  displayTime = '25:00';
+  isRunning = false;
+  timerSubscription: Subscription | null = null;
 
-  ngOnInit(): void {
-    this.startTimer();
+  ngOnInit() {
+    this.updateDisplay();
+  }
+
+  toggleTimer() {
+    if (this.isRunning) {
+      this.pauseTimer();
+    } else {
+      this.startTimer();
+    }
   }
 
   startTimer() {
-    this.interval = setInterval(() => {
-      if (this.timeLeft > 0) {
-        this.timeLeft--;
-        this.progress = ((1500 - this.timeLeft) / 1500) * 100;
-      } else {
-        clearInterval(this.interval);
+    this.isRunning = true;
+    this.timerSubscription = interval(1000).subscribe(() => {
+      this.currentTime--;
+      this.progress = (this.currentTime / this.totalTime) * 100;
+      this.updateDisplay();
+      if (this.currentTime <= 0) {
+        this.pauseTimer();
       }
-    }, 1000);
+    });
   }
 
   pauseTimer() {
-    clearInterval(this.interval);
+    this.isRunning = false;
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
   }
 
-  resumeTimer() {
-    this.startTimer();
-  }
-
-  resetTimer() {
-    clearInterval(this.interval);
-    this.timeLeft = 1500;
-    this.progress = 0;
-  }
-
-  stopTimer() {
-    clearInterval(this.interval);
-    this.timeLeft = 0;
+  reset() {
+    this.pauseTimer();
+    this.currentTime = this.totalTime;
     this.progress = 100;
+    this.updateDisplay();
   }
 
-  get minutes(): string {
-    return Math.floor(this.timeLeft / 60).toString().padStart(2, '0');
+  skip() {
+    // Implement skip functionality
   }
 
-  get seconds(): string {
-    return (this.timeLeft % 60).toString().padStart(2, '0');
+  updateDisplay() {
+    this.progress = (this.currentTime / this.totalTime) * 100;
+    this.color = this.progress > 50 ? 'primary' : 'warn';
+    const minutes = Math.floor(this.currentTime / 60);
+    const seconds = this.currentTime % 60;
+    this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
-
-
-  mode: ProgressSpinnerMode = 'determinate';
 
 }
