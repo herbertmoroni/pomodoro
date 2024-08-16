@@ -1,9 +1,9 @@
 <mat-progress-spinner
-[value]="progress"
-[color]="color"
-[mode]="'determinate'"
-[diameter]="200">
-    </mat-progress-spinner>
+  [value]="progress"
+  [mode]="'determinate'"
+  [diameter]="200"
+  [style.color]="spinnerColor">
+</mat-progress-spinner>
     <div class="timer-display">
       {{ displayTime }}
       <div class="focus-label">FOCUS</div>
@@ -15,7 +15,7 @@
       <button mat-icon-button (click)="toggleTimer()">
         <mat-icon>{{ isRunning ? 'pause' : 'play_arrow' }}</mat-icon>
       </button>
-      <button mat-icon-button (click)="skip()">
+      <button mat-icon-button disabled (click)="skip()">
         <mat-icon>skip_next</mat-icon>
       </button>
     </div>

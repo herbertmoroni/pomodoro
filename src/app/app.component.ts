@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  color: string = 'primary';
+  spinnerColor: string = '#3f51b5'; 
   totalTime = 25 * 60; // 25 minutes in seconds
   currentTime = this.totalTime;
   progress = 100;
@@ -65,10 +65,15 @@ export class AppComponent {
 
   updateDisplay() {
     this.progress = (this.currentTime / this.totalTime) * 100;
-    this.color = this.progress > 50 ? 'primary' : 'warn';
+    this.spinnerColor = this.getColor(this.progress);
     const minutes = Math.floor(this.currentTime / 60);
     const seconds = this.currentTime % 60;
     this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  getColor(value: number): string {
+    const hue = (value * 1.2).toFixed(0); // Hue ranges from 0 (red) to 120 (green)
+    return `hsl(${hue}, 100%, 50%)`;
   }
 
 }
