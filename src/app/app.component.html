@@ -1,13 +1,15 @@
-<mat-progress-spinner
-  [value]="progress"
-  [mode]="'determinate'"
-  [diameter]="200"
-  [style.color]="spinnerColor">
-</mat-progress-spinner>
-    <div class="timer-display">
-      {{ displayTime }}
-      <div class="focus-label">FOCUS</div>
-    </div>
+<div class="timer-container">
+  <mat-progress-spinner
+    [value]="progress"
+    [mode]="'determinate'"
+    [diameter]="200"
+    class="custom-spinner">
+  </mat-progress-spinner>
+  <div class="timer-display">
+    {{ displayTime }}
+    <div class="focus-label">FOCUS</div>
+  </div>
+</div>
     <div class="controls">
       <button mat-icon-button (click)="reset()">
         <mat-icon>replay</mat-icon>
