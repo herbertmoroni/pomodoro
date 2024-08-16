@@ -9,14 +9,16 @@
   width: 200px;
   height: 200px;
 }
+.backdrop {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
 .custom-spinner {
   position: absolute;
 }
 .custom-spinner ::ng-deep circle {
-  stroke: yellow;  /* Blue color for completed portion */
-}
-.custom-spinner ::ng-deep circle:nth-child(2) {
-  stroke: blue;  /* Light gray for remaining portion */
+  stroke: #1a73e8;  /* Blue color for completed portion */
 }
 .timer-display {
   position: absolute;
