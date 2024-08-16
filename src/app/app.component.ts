@@ -20,9 +20,11 @@ export class AppComponent {
   displayTime = '25:00';
   isRunning = false;
   timerSubscription: Subscription | null = null;
+  alarmSound!: HTMLAudioElement;
 
   ngOnInit() {
     this.updateDisplay();
+    this.alarmSound = new Audio('mixkit-interface-hint-notification-911.wav');
   }
 
   toggleTimer() {
@@ -41,6 +43,7 @@ export class AppComponent {
       this.updateDisplay();
       if (this.currentTime <= 0) {
         this.pauseTimer();
+        this.playAlarm();
       }
     });
   }
@@ -52,6 +55,11 @@ export class AppComponent {
     }
   }
 
+  playAlarm() {
+    this.alarmSound.play();
+  }
+
+
   reset() {
     this.pauseTimer();
     this.currentTime = this.totalTime;
@@ -61,6 +69,7 @@ export class AppComponent {
 
   skip() {
     // Implement skip functionality
+    this.playAlarm();
   }
 
   updateDisplay() {
