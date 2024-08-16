@@ -1,10 +1,15 @@
+<div class="timer-container">
+<svg class="backdrop" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="45" fill="none" stroke="red" stroke-width="10"/>
+</svg>
 <mat-progress-spinner 
   class="timer" 
   [mode]="mode" 
   [value]="progress" 
-  diameter="250"
+  diameter="200"
   color="primary">
 </mat-progress-spinner>
+</div>
 
 <div class="timer-text">
   <div>{{ minutes }}:{{ seconds }}</div>
