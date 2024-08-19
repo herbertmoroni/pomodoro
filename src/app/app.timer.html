@@ -1,0 +1,25 @@
+<div class="timer-container">
+    <svg class="backdrop" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="45" fill="none" stroke="red" stroke-width="10"/>
+    </svg>
+    <mat-progress-spinner 
+      class="timer" 
+      [mode]="mode" 
+      [value]="progress" 
+      diameter="200"
+      color="primary">
+    </mat-progress-spinner>
+    </div>
+    
+    <div class="timer-text">
+      <div>{{ minutes }}:{{ seconds }}</div>
+      <div>FOCUS</div>
+    </div>
+    
+    <div class="timer-controls">
+      <button mat-raised-button color="primary" (click)="startTimer()">Start</button>
+      <button mat-raised-button color="primary" (click)="pauseTimer()">Pause</button>
+      <button mat-raised-button color="primary" (click)="resumeTimer()">Resume</button>
+      <button mat-raised-button color="warn" (click)="stopTimer()">Stop</button>
+      <button mat-raised-button color="accent" (click)="resetTimer()">Reset</button>
+    </div>
