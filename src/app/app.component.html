@@ -15,11 +15,14 @@
   <div>{{ minutes }}:{{ seconds }}</div>
   <div>FOCUS</div>
 </div>
-
-<div class="timer-controls">
-  <button mat-raised-button color="primary" (click)="startTimer()">Start</button>
-  <button mat-raised-button color="primary" (click)="pauseTimer()">Pause</button>
-  <button mat-raised-button color="primary" (click)="resumeTimer()">Resume</button>
-  <button mat-raised-button color="warn" (click)="stopTimer()">Stop</button>
-  <button mat-raised-button color="accent" (click)="resetTimer()">Reset</button>
-</div>
+    <div class="controls">
+      <button mat-icon-button (click)="reset()">
+        <mat-icon>replay</mat-icon>
+      </button>
+      <button mat-icon-button (click)="toggleTimer()">
+        <mat-icon>{{ isRunning ? 'pause' : 'play_arrow' }}</mat-icon>
+      </button>
+      <button mat-icon-button disabled (click)="skip()">
+        <mat-icon>skip_next</mat-icon>
+      </button>
+    </div>
