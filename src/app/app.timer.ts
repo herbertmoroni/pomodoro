@@ -59,5 +59,4 @@ export class AppTimer {
 
 
   mode: ProgressSpinnerMode = 'determinate';
-
 }
