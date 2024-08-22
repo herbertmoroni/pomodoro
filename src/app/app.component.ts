@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ProgressSpinnerMode, MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { interval, Subscription, timer } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Subscription, timer } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { Title } from '@angular/platform-browser';
@@ -84,8 +84,7 @@ export class AppComponent {
   }
 
   skip() {
-    // Implement skip functionality
-    this.playAlarm();
+     this.playAlarm();
   }
 
   updateDisplay() {
