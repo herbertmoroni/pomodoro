@@ -20,9 +20,9 @@
   position: absolute;
 }
 
-/* .custom-spinner ::ng-deep circle {
-  stroke: #1a73e8;  
-} */
+.custom-spinner ::ng-deep circle {
+  stroke: #005cbb;  
+} 
 
 .timer-display {
   position: absolute;
