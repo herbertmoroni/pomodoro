@@ -14,7 +14,7 @@ import { Title } from '@angular/platform-browser';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  spinnerColor: string = '#3f51b5'; 
+  //spinnerColor: string = '#3f51b5'; 
   totalTime = 25 * 60; // 25 minutes in seconds
   currentTime = this.totalTime;
   progress = 0;
@@ -53,14 +53,12 @@ export class AppComponent {
     this.timerSubscription = timer(0, 100).subscribe(() => {
       const elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
       this.currentTime = this.totalTime - elapsedSeconds;
-      
+      this.updateDisplay();
+      this.updatePageTitle();
       if (this.currentTime <= 0) {
-        this.currentTime = 0;
         this.pauseTimer();
         this.playAlarm();
       }
-      
-      this.updateDisplay();
     });
   }
 
@@ -69,7 +67,7 @@ export class AppComponent {
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
-    this.titleService.setTitle(this.originalTitle);
+    this.updatePageTitle();
   }
 
   playAlarm() {
@@ -81,19 +79,20 @@ export class AppComponent {
     this.currentTime = this.totalTime;
     this.progress = 0;
     this.updateDisplay();
+    this.updatePageTitle();
   }
 
   skip() {
-     this.playAlarm();
+     //Implement the skip method
   }
 
   updateDisplay() {
     this.progress = 100 - ((this.currentTime / this.totalTime) * 100);
-    this.spinnerColor = this.getColor(this.progress);
+    //this.spinnerColor = this.getColor(this.progress);
     const minutes = Math.floor(this.currentTime / 60);
     const seconds = this.currentTime % 60;
     this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    this.updatePageTitle();
+    
   }
 
   getColor(value: number): string {
@@ -102,8 +101,8 @@ export class AppComponent {
   }
 
   updatePageTitle() {
-    if (this.isRunning) {
-      this.titleService.setTitle(`(${this.displayTime}) Pomodoro Timer`);
+    if (this.isRunning || this.currentTime < this.totalTime) {
+      this.titleService.setTitle(`${this.displayTime} - Pomodoro Timer`);
     } else {
       this.titleService.setTitle(this.originalTitle);
     }
