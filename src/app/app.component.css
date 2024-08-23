@@ -20,9 +20,9 @@
   position: absolute;
 }
 
-.custom-spinner ::ng-deep circle {
-  stroke: #1a73e8;  /* Blue color for completed portion */
-}
+/* .custom-spinner ::ng-deep circle {
+  stroke: #1a73e8;  
+} */
 
 .timer-display {
   position: absolute;
