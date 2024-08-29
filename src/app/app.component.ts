@@ -12,11 +12,11 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  focusTime = 25 * 60; // 25 minutes in seconds
-  breakTime = 5 * 60; // 5 minutes in seconds
+  focusTime = 2 * 60; // 25 minutes in seconds
+  breakTime = 1 * 60; // 5 minutes in seconds
   currentTime: number;
   progress = 0;
   displayTime = '25:00';
@@ -26,6 +26,12 @@ export class AppComponent implements OnInit, OnDestroy {
   alarmSound!: HTMLAudioElement;
   startTime: number = 0;
   originalTitle: string;
+
+   // Color constants
+   readonly FOCUS_BACKDROP_COLOR = '#5393e7';
+   readonly BREAK_BACKDROP_COLOR = 'yellow';
+   readonly FOCUS_SPINNER_COLOR = '#005cbb';
+   readonly BREAK_SPINNER_COLOR = '#fcff7a';
 
   constructor(private titleService: Title) {
     this.originalTitle = this.titleService.getTitle();
@@ -42,6 +48,18 @@ export class AppComponent implements OnInit, OnDestroy {
     this.titleService.setTitle(this.originalTitle);
   }
 
+  get backdropColor(): string {
+    return this.isFocusTime ? this.FOCUS_BACKDROP_COLOR : this.BREAK_BACKDROP_COLOR;
+  }
+
+  get spinnerColor(): string {
+    return this.isFocusTime ? this.FOCUS_SPINNER_COLOR : this.BREAK_SPINNER_COLOR;
+  }
+
+  get spinnerStyle() {
+    return { 'stroke': this.spinnerColor };
+  }
+  
   toggleTimer() {
     if (this.isRunning) {
       this.pauseTimer();
@@ -129,10 +147,6 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       this.titleService.setTitle(this.originalTitle);
     }
-  }
-
-  get spinnerColor(): string {
-    return this.isFocusTime ? '#005cbb' : '#ffd700';
   }
 
   get modeLabel(): string {

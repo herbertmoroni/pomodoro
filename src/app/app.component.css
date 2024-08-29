@@ -22,7 +22,7 @@
 }
 
 .custom-spinner ::ng-deep circle {
-  stroke: currentColor;
+  stroke: #005cbb;
 }
 
 .timer-display {
