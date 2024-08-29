@@ -18,7 +18,7 @@ export class AppComponent {
   totalTime = 25 * 60; // 25 minutes in seconds
   currentTime = this.totalTime;
   progress = 0;
-  displayTime = '25:00';
+  displayTime = '25:00'; //just initial value
   isRunning = false;
   timerSubscription: Subscription | null = null;
   alarmSound!: HTMLAudioElement;
