@@ -1,10 +1,11 @@
 <div class="timer-container">
   <svg class="backdrop" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="45" fill="none" [attr.stroke]="spinnerColor" stroke-width="10"></circle>
+    <circle cx="50" cy="50" r="45" fill="none" [attr.stroke]="backdropColor" stroke-width="10"></circle>
   </svg>
 
   <mat-progress-spinner
     class="custom-spinner"
+    [ngStyle]="spinnerStyle"
     [color]="'primary'"
     [mode]="'determinate'"
     [value]="progress"
