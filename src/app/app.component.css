@@ -22,8 +22,8 @@
 }
 
 .custom-spinner ::ng-deep circle {
-  stroke: #005cbb;  
-} 
+  stroke: currentColor;
+}
 
 .timer-display {
   position: absolute;
