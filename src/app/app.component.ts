@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent implements OnInit, OnDestroy {
   focusTime = 25 * 60; // 25 minutes in seconds
-  breakTime = 2 * 60; // 5 minutes in seconds
+  breakTime = 5 * 60; // 5 minutes in seconds
   currentTime: number;
   progress = 0;
   displayTime = '25:00';
