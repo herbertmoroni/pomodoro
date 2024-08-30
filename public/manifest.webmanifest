@@ -1,11 +1,14 @@
 {
-  "name": "pomodoro",
-  "short_name": "pomodoro",
+  "name": "Pomodoro Timer",
+  "short_name": "Pomodoro",
+  "description": "A simple and effective Pomodoro timer to boost your productivity",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
-  "scope": "./",
-  "start_url": "./",
+  "scope": "/",
+  "start_url": "/",
+  "orientation": "any",
+  "categories": ["productivity", "utilities"],
   "icons": [
     {
       "src": "icons/icon-72x72.png",
