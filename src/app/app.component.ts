@@ -44,6 +44,15 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.updateDisplay();
     this.alarmSound = new Audio('mixkit-interface-hint-notification-911.wav');
+
+    // Load autoStart value from localStorage
+    const savedAutoStart = localStorage.getItem('autoStart');
+    this.autoStart = savedAutoStart === 'true';
+  }
+
+  onAutoStartChange() {
+    // Save autoStart value to localStorage
+    localStorage.setItem('autoStart', this.autoStart.toString());
   }
 
   ngOnDestroy() {
