@@ -32,7 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
    // Color constants
    readonly FOCUS_BACKDROP_COLOR = '#5393e7';
-   readonly BREAK_BACKDROP_COLOR = 'yellow';
+   readonly BREAK_BACKDROP_COLOR = '#C66';
    readonly FOCUS_SPINNER_COLOR = '#005cbb';
    readonly BREAK_SPINNER_COLOR = '#fcff7a';
 
