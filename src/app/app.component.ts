@@ -4,13 +4,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, timer } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule],
+  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -26,6 +28,7 @@ export class AppComponent implements OnInit, OnDestroy {
   alarmSound!: HTMLAudioElement;
   startTime: number = 0;
   originalTitle: string;
+  autoStart: boolean = false;
 
    // Color constants
    readonly FOCUS_BACKDROP_COLOR = '#5393e7';
@@ -77,7 +80,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.updateDisplay();
       this.updatePageTitle();
       if (this.currentTime <= 0) {
-        this.switchMode(true);
+        this.switchMode();
       }
     });
   }
@@ -107,18 +110,16 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   skip() {
-    this.switchMode(false);
+    this.switchMode();
   }
 
-  switchMode(autoStart: boolean) {
+  switchMode() {
     this.stopTimer();
-    if (autoStart) {
-      this.playAlarm();
-    }
+    this.playAlarm(); // Always play the alarm
     this.isFocusTime = !this.isFocusTime;
     this.currentTime = this.getTotalTime();
     this.updateDisplay();
-    if (autoStart) {
+    if (this.autoStart) {
       this.startTimer();
     }
   }
