@@ -42,3 +42,11 @@
 .controls {
   margin-top: 20px;
 }
+
+.auto-start {
+  margin-top: 20px;
+}
+
+ ::ng-deep .mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked:not(.mat-disabled) .mdc-switch__track::after {
+  background-color:  #5393e7 !important;
+} 
