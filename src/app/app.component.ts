@@ -42,6 +42,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      window.resizeTo(600, 400); // Width: 600px, Height: 400px
+    }
+
     this.updateDisplay();
     this.alarmSound = new Audio('mixkit-interface-hint-notification-911.wav');
 
