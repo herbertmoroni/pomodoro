@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      window.resizeTo(600, 400); // Width: 600px, Height: 400px
+      window.resizeTo(700, 500); // Width: 600px, Height: 400px
     }
 
     this.updateDisplay();
