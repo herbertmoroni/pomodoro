@@ -21,19 +21,31 @@
 </div>
 
 <div class="controls">
-  <button mat-icon-button (click)="reset()">
+  <button mat-icon-button (click)="reset()" 
+    matTooltip="Reset Timer: Return to the start of the current session"
+    matTooltipShowDelay="600">
     <mat-icon>replay</mat-icon>
   </button>
 
-  <button mat-icon-button (click)="toggleTimer()">
+  <button mat-icon-button (click)="toggleTimer()" 
+    matTooltip="Start/Pause: Begin or pause the current timer"
+    matTooltipShowDelay="600">
     <mat-icon>{{ isRunning ? 'pause' : 'play_arrow' }}</mat-icon>
   </button>
 
-  <button mat-icon-button (click)="skip()">
+  <button mat-icon-button (click)="skip()" 
+    matTooltip="Skip: Move to the next session (focus or break)"
+    matTooltipShowDelay="600">
     <mat-icon>{{ skipIcon }}</mat-icon>
   </button>
 </div>
 
 <div class="auto-start">
-  <mat-slide-toggle (change)="onAutoStartChange()" [(ngModel)]="autoStart">Auto Start</mat-slide-toggle>
+  <mat-slide-toggle 
+    (change)="onAutoStartChange()" 
+    [(ngModel)]="autoStart"
+    matTooltip="Auto Start: When on, automatically begins the next session after the current one ends"
+    matTooltipShowDelay="600">
+    Auto Start
+  </mat-slide-toggle>
 </div>
