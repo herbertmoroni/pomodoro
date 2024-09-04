@@ -8,11 +8,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule],
+  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule, MatTooltipModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
