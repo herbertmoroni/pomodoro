@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://focusgo.app/sitemap.xml
+
+# Common crawl delay (optional)
+Crawl-delay: 1
+
+# Disallow access to source maps and development files
+Disallow: /*.map$
+Disallow: /assets/dev/
+Disallow: /*.ts$
+Disallow: /*.spec.js$
+
+# Allow access to common assets
+Allow: /assets/
+Allow: /icons/
