@@ -1,0 +1,19 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+.angular
+
+# IDE
+.vscode
+.idea
+
+# Version control
+.git
+
+# Package files
+package-lock.json
+
+# Public assets
+public
