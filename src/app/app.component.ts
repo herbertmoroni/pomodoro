@@ -18,8 +18,21 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   styleUrl: './app.component.css',
 })
 export class AppComponent implements OnInit, OnDestroy {
-  focusTime = 25 * 60; // 25 minutes in seconds
-  breakTime = 5 * 60; // 5 minutes in seconds
+  // Timer duration constants (in minutes)
+  private readonly FOCUS_DURATION_MINUTES = 25;
+  private readonly BREAK_DURATION_MINUTES = 5;
+
+  // Timer update interval (in milliseconds)
+  private readonly TIMER_UPDATE_INTERVAL_MS = 100;
+
+  // PWA window dimensions
+  private readonly PWA_WINDOW_WIDTH = 700;
+  private readonly PWA_WINDOW_HEIGHT = 500;
+
+  // Calculated timer durations in seconds
+  focusTime = this.FOCUS_DURATION_MINUTES * 60;
+  breakTime = this.BREAK_DURATION_MINUTES * 60;
+
   currentTime: number;
   progress = 0;
   displayTime = '25:00';
@@ -31,11 +44,11 @@ export class AppComponent implements OnInit, OnDestroy {
   originalTitle: string;
   autoStart: boolean = false;
 
-   // Color constants
-   readonly FOCUS_BACKDROP_COLOR = '#5393e7';
-   readonly BREAK_BACKDROP_COLOR = '#C66';
-   readonly FOCUS_SPINNER_COLOR = '#005cbb';
-   readonly BREAK_SPINNER_COLOR = '#fcff7a';
+  // Color constants
+  readonly FOCUS_BACKDROP_COLOR = '#5393e7';
+  readonly BREAK_BACKDROP_COLOR = '#C66';
+  readonly FOCUS_SPINNER_COLOR = '#005cbb';
+  readonly BREAK_SPINNER_COLOR = '#fcff7a';
 
   constructor(private titleService: Title) {
     this.originalTitle = this.titleService.getTitle();
@@ -43,21 +56,94 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      window.resizeTo(700, 500); // Width: 600px, Height: 400px
+    // Feature detection: window.matchMedia and window.resizeTo
+    if (this.isFeatureSupported('matchMedia') && window.matchMedia('(display-mode: standalone)').matches) {
+      if (this.isFeatureSupported('resizeTo')) {
+        try {
+          window.resizeTo(this.PWA_WINDOW_WIDTH, this.PWA_WINDOW_HEIGHT);
+        } catch (error) {
+          console.warn('Unable to resize window:', error);
+        }
+      }
     }
 
     this.updateDisplay();
-    this.alarmSound = new Audio('mixkit-interface-hint-notification-911.wav');
 
-    // Load autoStart value from localStorage
-    const savedAutoStart = localStorage.getItem('autoStart');
-    this.autoStart = savedAutoStart === 'true';
+    // Feature detection: Audio API
+    if (this.isFeatureSupported('Audio')) {
+      try {
+        this.alarmSound = new Audio('mixkit-interface-hint-notification-911.wav');
+        this.alarmSound.load();
+      } catch (error) {
+        console.error('Failed to load alarm sound:', error);
+        // Create a dummy audio element to prevent errors when playAlarm is called
+        this.alarmSound = new Audio();
+      }
+    } else {
+      console.warn('Audio API not supported');
+      // Create a dummy audio element
+      this.alarmSound = { play: () => Promise.resolve() } as HTMLAudioElement;
+    }
+
+    // Feature detection: localStorage
+    if (this.isLocalStorageAvailable()) {
+      try {
+        const savedAutoStart = localStorage.getItem('autoStart');
+        this.autoStart = savedAutoStart === 'true';
+      } catch (error) {
+        console.warn('Failed to load autoStart preference from localStorage:', error);
+        this.autoStart = false; // Default value
+      }
+    } else {
+      console.warn('localStorage is not available');
+      this.autoStart = false; // Default value
+    }
+  }
+
+  /**
+   * Check if a browser feature is supported
+   */
+  private isFeatureSupported(feature: 'matchMedia' | 'resizeTo' | 'Audio'): boolean {
+    switch (feature) {
+      case 'matchMedia':
+        return typeof window !== 'undefined' && 'matchMedia' in window;
+      case 'resizeTo':
+        return typeof window !== 'undefined' && 'resizeTo' in window && typeof window.resizeTo === 'function';
+      case 'Audio':
+        return typeof window !== 'undefined' && 'Audio' in window;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Check if localStorage is available and accessible
+   */
+  private isLocalStorageAvailable(): boolean {
+    try {
+      if (typeof window === 'undefined' || !window.localStorage) {
+        return false;
+      }
+      const testKey = '__localStorage_test__';
+      localStorage.setItem(testKey, 'test');
+      localStorage.removeItem(testKey);
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   onAutoStartChange() {
-    // Save autoStart value to localStorage
-    localStorage.setItem('autoStart', this.autoStart.toString());
+    // Save autoStart value to localStorage with error handling
+    if (this.isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('autoStart', this.autoStart.toString());
+      } catch (error) {
+        console.error('Failed to save autoStart preference to localStorage:', error);
+      }
+    } else {
+      console.warn('localStorage is not available, preference cannot be saved');
+    }
   }
 
   ngOnDestroy() {
@@ -88,7 +174,7 @@ export class AppComponent implements OnInit, OnDestroy {
   startTimer() {
     this.isRunning = true;
     this.startTime = Date.now() - ((this.getTotalTime() - this.currentTime) * 1000);
-    this.timerSubscription = timer(0, 100).subscribe(() => {
+    this.timerSubscription = timer(0, this.TIMER_UPDATE_INTERVAL_MS).subscribe(() => {
       const elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
       this.currentTime = this.getTotalTime() - elapsedSeconds;
       this.updateDisplay();
@@ -113,7 +199,12 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   playAlarm() {
-    this.alarmSound.play();
+    if (this.alarmSound) {
+      this.alarmSound.play().catch((error) => {
+        console.warn('Failed to play alarm sound:', error);
+        // Alarm playback failed (possibly due to browser autoplay policy)
+      });
+    }
   }
 
   reset() {
