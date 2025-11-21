@@ -22,7 +22,7 @@ interface Category {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule, MatTooltipModule, MatMenuModule, MatChipsModule],
+  imports: [MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule, MatTooltipModule, MatMenuModule, MatChipsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -61,12 +61,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Categories
   categories: Category[] = [
-    { id: 'work', name: 'Work', color: '#22c55e', icon: 'work' },
-    { id: 'study', name: 'Study', color: '#3b82f6', icon: 'school' },
-    { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'person' },
-    { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'priority_high' },
-    { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'fitness_center' },
-    { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label_off' }
+    { id: 'work', name: 'Work', color: '#22c55e', icon: 'label' },
+    { id: 'study', name: 'Study', color: '#3b82f6', icon: 'label' },
+    { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'label' },
+    { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'label' },
+    { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'label' },
+    { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label' }
   ];
   selectedCategory: Category;
 
