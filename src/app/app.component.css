@@ -39,6 +39,60 @@
   margin-top: 5px;
 }
 
+.category-container {
+  margin-top: 8px;
+}
+
+.category-chip {
+  padding: 4px 12px !important;
+  border-radius: 8px !important;
+  min-width: auto !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  color: white !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.category-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+  filter: brightness(1.1);
+}
+
+.category-icon {
+  font-size: 16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+}
+
+.category-name {
+  margin-left: 2px;
+}
+
+.category-menu-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.category-menu-item mat-icon {
+  font-size: 20px !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+::ng-deep .category-menu .mat-mdc-menu-content {
+  padding: 8px 0 !important;
+}
+
 .controls {
   margin-top: 20px;
 }

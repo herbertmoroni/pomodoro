@@ -9,11 +9,20 @@ import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatChipsModule } from '@angular/material/chips';
+
+interface Category {
+  id: string;
+  name: string;
+  color: string;
+  icon?: string;
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule, MatTooltipModule],
+  imports: [RouterOutlet, MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule, MatTooltipModule, MatMenuModule, MatChipsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -50,9 +59,21 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly FOCUS_SPINNER_COLOR = '#005cbb';
   readonly BREAK_SPINNER_COLOR = '#fcff7a';
 
+  // Categories
+  categories: Category[] = [
+    { id: 'work', name: 'Work', color: '#22c55e', icon: 'work' },
+    { id: 'study', name: 'Study', color: '#3b82f6', icon: 'school' },
+    { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'person' },
+    { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'priority_high' },
+    { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'fitness_center' },
+    { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label_off' }
+  ];
+  selectedCategory: Category;
+
   constructor(private titleService: Title) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
+    this.selectedCategory = this.categories[5]; // Default to 'No Category'
   }
 
   ngOnInit() {
@@ -90,8 +111,17 @@ export class AppComponent implements OnInit, OnDestroy {
       try {
         const savedAutoStart = localStorage.getItem('autoStart');
         this.autoStart = savedAutoStart === 'true';
+        
+        // Load saved category
+        const savedCategoryId = localStorage.getItem('selectedCategory');
+        if (savedCategoryId) {
+          const category = this.categories.find(c => c.id === savedCategoryId);
+          if (category) {
+            this.selectedCategory = category;
+          }
+        }
       } catch (error) {
-        console.warn('Failed to load autoStart preference from localStorage:', error);
+        console.warn('Failed to load preferences from localStorage:', error);
         this.autoStart = false; // Default value
       }
     } else {
@@ -261,5 +291,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   get skipIcon(): string {
     return this.isFocusTime ? 'arrow_forward' : 'arrow_back';
+  }
+
+  selectCategory(category: Category) {
+    this.selectedCategory = category;
+    
+    // Save to localStorage
+    if (this.isLocalStorageAvailable()) {
+      try {
+        localStorage.setItem('selectedCategory', category.id);
+      } catch (error) {
+        console.error('Failed to save category preference to localStorage:', error);
+      }
+    }
   }
 }
