@@ -16,6 +16,29 @@
     {{ displayTime }}
     <div class="focus-label">
       {{ modeLabel }}
+      <div class="category-container">
+        <button 
+          mat-button 
+          [matMenuTriggerFor]="categoryMenu"
+          class="category-chip"
+          [style.background-color]="selectedCategory.color"
+          matTooltip="Click to change category"
+          matTooltipShowDelay="600">
+          <mat-icon class="category-icon">{{ selectedCategory.icon }}</mat-icon>
+          <span class="category-name">{{ selectedCategory.name }}</span>
+        </button>
+        
+        <mat-menu #categoryMenu="matMenu" class="category-menu">
+          <button 
+            mat-menu-item 
+            *ngFor="let category of categories"
+            (click)="selectCategory(category)"
+            class="category-menu-item">
+            <mat-icon [style.color]="category.color">{{ category.icon }}</mat-icon>
+            <span>{{ category.name }}</span>
+          </button>
+        </mat-menu>
+      </div>
     </div>
   </div>
 </div>
