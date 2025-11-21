@@ -52,22 +52,6 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 - 📈 Advanced analytics dashboard
 - 🔄 Data export functionality
 
-## Lessons Learned So Far
-
-**AWS Amplify:**
-- Serverless deployment is straightforward for Angular apps
-- Built-in CI/CD saves significant DevOps time
-- Cost-effective for personal projects (free tier covers most usage)
-
-**Angular 17:**
-- Material Design provides enterprise-ready UI components
-
-**AI Integration Considerations (research phase):**
-- API costs vary dramatically between providers
-- Context window management is critical for personal data
-- Security and privacy must be designed in from the start
-- These insights are being documented in my upcoming book
-
 ## Installation
 
 **Desktop (Chrome, Edge, Brave):**
@@ -96,10 +80,6 @@ Built by Herbert Moroni Gois while writing "AI Security for .NET Developers".
 ## License
 
 This project is open source and available for personal and commercial use.
-
-## Author
-
-**Herbert Moroni Gois**
 
 ## Acknowledgments
 
