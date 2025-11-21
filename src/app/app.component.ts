@@ -19,6 +19,26 @@ interface Category {
   icon?: string;
 }
 
+interface PomodoroSession {
+  id: string;
+  categoryId: string;
+  categoryName: string;
+  duration: number;              // Planned duration in seconds
+  actualDuration: number;        // Actual time spent in seconds
+  startTime: string;             // ISO date string
+  endTime: string;               // ISO date string
+  completed: boolean;            // true = finished, false = skipped
+  dayOfWeek: number;            // 0-6
+  hourOfDay: number;            // 0-23
+  consecutiveSession: number;    // Which pomodoro in a row
+  followedBreak: boolean;        // Did they take the break before this
+}
+
+interface PomodoroStats {
+  totalBreaks: number;
+  sessions: PomodoroSession[];
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -69,6 +89,11 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label' }
   ];
   selectedCategory: Category;
+
+  // Session tracking
+  sessionStartTime: Date | null = null;
+  consecutiveSessionCount: number = 0;
+  lastSessionWasBreak: boolean = false;
 
   constructor(private titleService: Title) {
     this.originalTitle = this.titleService.getTitle();
@@ -204,6 +229,18 @@ export class AppComponent implements OnInit, OnDestroy {
   startTimer() {
     this.isRunning = true;
     this.startTime = Date.now() - ((this.getTotalTime() - this.currentTime) * 1000);
+    
+    // Track focus session start
+    if (this.isFocusTime && !this.sessionStartTime) {
+      this.sessionStartTime = new Date();
+      if (!this.lastSessionWasBreak) {
+        this.consecutiveSessionCount++;
+      } else {
+        this.consecutiveSessionCount = 1;
+        this.lastSessionWasBreak = false;
+      }
+    }
+    
     this.timerSubscription = timer(0, this.TIMER_UPDATE_INTERVAL_MS).subscribe(() => {
       const elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
       this.currentTime = this.getTotalTime() - elapsedSeconds;
@@ -238,6 +275,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   reset() {
+    // If resetting during a focus session, don't save it
+    if (this.isFocusTime) {
+      this.sessionStartTime = null;
+    }
+    
     this.stopTimer();
     this.currentTime = this.getTotalTime();
     this.updateDisplay();
@@ -245,10 +287,25 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   skip() {
+    // If skipping a focus session, save it as incomplete
+    if (this.isFocusTime && this.sessionStartTime) {
+      this.saveSession(false);
+    }
     this.switchMode();
   }
 
   switchMode() {
+    // Save completed focus session
+    if (!this.isFocusTime && this.sessionStartTime) {
+      this.saveSession(true);
+    }
+    
+    // Track break completion
+    if (!this.isFocusTime) {
+      this.incrementBreakCounter();
+      this.lastSessionWasBreak = true;
+    }
+    
     this.stopTimer();
     this.playAlarm(); // Always play the alarm
     this.isFocusTime = !this.isFocusTime;
@@ -303,6 +360,74 @@ export class AppComponent implements OnInit, OnDestroy {
       } catch (error) {
         console.error('Failed to save category preference to localStorage:', error);
       }
+    }
+  }
+
+  // Session tracking methods
+  private saveSession(completed: boolean) {
+    if (!this.sessionStartTime) return;
+
+    const endTime = new Date();
+    const actualDuration = Math.floor((endTime.getTime() - this.sessionStartTime.getTime()) / 1000);
+
+    const session: PomodoroSession = {
+      id: `session_${this.sessionStartTime.getTime()}`,
+      categoryId: this.selectedCategory.id,
+      categoryName: this.selectedCategory.name,
+      duration: this.focusTime,
+      actualDuration: actualDuration,
+      startTime: this.sessionStartTime.toISOString(),
+      endTime: endTime.toISOString(),
+      completed: completed,
+      dayOfWeek: this.sessionStartTime.getDay(),
+      hourOfDay: this.sessionStartTime.getHours(),
+      consecutiveSession: this.consecutiveSessionCount,
+      followedBreak: this.lastSessionWasBreak
+    };
+
+    this.saveSessionToLocalStorage(session);
+    this.sessionStartTime = null;
+  }
+
+  private saveSessionToLocalStorage(session: PomodoroSession) {
+    if (!this.isLocalStorageAvailable()) return;
+
+    try {
+      // Get existing sessions
+      const existingData = localStorage.getItem('pomodoroStats');
+      const stats: PomodoroStats = existingData 
+        ? JSON.parse(existingData) 
+        : { totalBreaks: 0, sessions: [] };
+
+      // Add new session
+      stats.sessions.push(session);
+
+      // Keep only last 500 sessions to avoid storage limits
+      if (stats.sessions.length > 500) {
+        stats.sessions = stats.sessions.slice(-500);
+      }
+
+      // Save back to localStorage
+      localStorage.setItem('pomodoroStats', JSON.stringify(stats));
+      console.log('Session saved:', session);
+    } catch (error) {
+      console.error('Failed to save session to localStorage:', error);
+    }
+  }
+
+  private incrementBreakCounter() {
+    if (!this.isLocalStorageAvailable()) return;
+
+    try {
+      const existingData = localStorage.getItem('pomodoroStats');
+      const stats: PomodoroStats = existingData 
+        ? JSON.parse(existingData) 
+        : { totalBreaks: 0, sessions: [] };
+
+      stats.totalBreaks++;
+      localStorage.setItem('pomodoroStats', JSON.stringify(stats));
+    } catch (error) {
+      console.error('Failed to increment break counter:', error);
     }
   }
 }
