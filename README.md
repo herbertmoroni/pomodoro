@@ -60,9 +60,7 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 - Cost-effective for personal projects (free tier covers most usage)
 
 **Angular 17:**
-- Standalone components simplify architecture
 - Material Design provides enterprise-ready UI components
-- Modern Angular is significantly more performant
 
 **AI Integration Considerations (research phase):**
 - API costs vary dramatically between providers
@@ -83,7 +81,8 @@ Visit site → Share → "Add to Home Screen"
 
 ## About
 
-Built by Herbert Moroni Gois while writing "AI Security for .NET Developers" (expected December 2025).
+Built by Herbert Moroni Gois while writing "AI Security for .NET Developers".
+
 **Background:**
 - Senior Software Engineer with 20+ years .NET/Angular experience
 - Published author of 6 technical books
