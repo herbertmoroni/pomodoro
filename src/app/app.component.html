@@ -20,12 +20,12 @@
         <button 
           mat-button 
           [matMenuTriggerFor]="categoryMenu"
-          class="category-chip"
-          [style.background-color]="selectedCategory.color"
+          class="category-selector"
           matTooltip="Click to change category"
           matTooltipShowDelay="600">
-          <mat-icon class="category-icon">{{ selectedCategory.icon }}</mat-icon>
+          <mat-icon class="category-icon" [style.color]="selectedCategory.color">label</mat-icon>
           <span class="category-name">{{ selectedCategory.name }}</span>
+          <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
         </button>
         
         <mat-menu #categoryMenu="matMenu" class="category-menu">
@@ -34,7 +34,7 @@
             *ngFor="let category of categories"
             (click)="selectCategory(category)"
             class="category-menu-item">
-            <mat-icon [style.color]="category.color">{{ category.icon }}</mat-icon>
+            <mat-icon [style.color]="category.color">label</mat-icon>
             <span>{{ category.name }}</span>
           </button>
         </mat-menu>
