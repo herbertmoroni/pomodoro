@@ -1,201 +1,98 @@
-# Pomodoro Timer
+# Pomodoro Focus Tracker
 
-A modern, Progressive Web App (PWA) Pomodoro timer built with Angular 18 and Angular Material. Stay focused, manage your time effectively, and boost your productivity with this simple yet powerful timer application.
+Personal productivity tool built to explore Angular + AWS Amplify architecture 
+while solving a real problem: understanding where my focused time actually goes.
 
 🌐 **Live Demo:** [https://focusgo.app](https://focusgo.app)
 
+## Why This Project?
+
+I built this as both a personal productivity tool and a learning laboratory while writing my 7th technical book, "AI Security for .NET Developers."
+
+**Current Status:**
+- ✅ Core Pomodoro timer functionality
+- ✅ Progressive Web App (works offline, installs on devices)
+- ✅ Material Design UI
+- ✅ AWS Amplify serverless deployment
+- 🔄 **Exploring AI integration** for time pattern analysis
+
+## Tech Stack
+
+- **Frontend:** Angular 17 + Angular Material
+- **Hosting:** AWS Amplify (serverless)
+- **Future:** Evaluating AI APIs for time analysis features
+
+## What I'm Learning
+
+### Amplify Architecture
+This project let me explore AWS Amplify's serverless architecture with Angular:
+- Amplify Hosting for static Angular apps
+- CI/CD pipeline integration
+- Environment-based configuration
+- Cost-effective hosting for personal projects
+
+### AI Integration Exploration (In Progress)
+Currently evaluating different approaches for adding AI-powered time analysis:
+- Tested GitHub Models for initial prototyping
+- Exploring cost/performance trade-offs of various AI APIs
+- Researching security patterns for AI integration
+- These learnings will inform the AI Security book
+
 ## Features
 
-- ⏱️ **Classic Pomodoro Technique**: 25-minute focus sessions followed by 5-minute breaks
-- 🎨 **Visual Progress Indicator**: Circular progress spinner shows time remaining
-- 🔔 **Audio Notifications**: Sound alert when switching between focus and break modes
-- 🔄 **Auto-Start Option**: Automatically begin the next session (configurable)
-- 📱 **Progressive Web App**: Install on any device for offline access
-- 🎯 **Minimal & Distraction-Free**: Clean Material Design interface
-- 💾 **Persistent Settings**: Your preferences are saved locally
-- 🌓 **Mode Indication**: Clear visual distinction between focus and break times
+### Current
+- ⏱️ Pomodoro timer with customizable intervals
+- 📊 Session tracking
+- 🎨 Material Design UI
+- 📱 Responsive (works on mobile)
+- 💾 Local data persistence
 
-## Technology Stack
+### Planned
+- 🤖 AI-powered time pattern analysis
+- 📈 Advanced analytics dashboard
+- 🔄 Data export functionality
 
-- **Framework**: Angular 18 (standalone components)
-- **UI Library**: Angular Material
-- **State Management**: RxJS
-- **PWA**: Angular Service Worker
-- **TypeScript**: Strict mode enabled
-- **Build Tool**: Angular CLI
+## Lessons Learned So Far
 
-## Prerequisites
+**AWS Amplify:**
+- Serverless deployment is straightforward for Angular apps
+- Built-in CI/CD saves significant DevOps time
+- Cost-effective for personal projects (free tier covers most usage)
 
-- Node.js 18.x or higher
-- npm 9.x or higher
+**Angular 17:**
+- Standalone components simplify architecture
+- Material Design provides enterprise-ready UI components
+- Modern Angular is significantly more performant
 
-## Getting Started
+**AI Integration Considerations (research phase):**
+- API costs vary dramatically between providers
+- Context window management is critical for personal data
+- Security and privacy must be designed in from the start
+- These insights are being documented in my upcoming book
 
-### Installation
+## Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/herbertmoroni/pomodoro.git
-cd pomodoro
+**Desktop (Chrome, Edge, Brave):**
+Visit [focusgo.app](https://focusgo.app) → Click install icon in address bar
 
-# Install dependencies
-npm install
-```
+**Mobile (Android):**
+Visit site → Tap "Add to Home Screen"
 
-### Development Server
+**iOS Safari:**
+Visit site → Share → "Add to Home Screen"
 
-```bash
-# Start the development server
-npm start
-```
+## About
 
-Navigate to `http://localhost:4200/`. The application will automatically reload when you change source files.
+Built by Herbert Moroni Gois while writing "AI Security for .NET Developers" (expected December 2025).
+**Background:**
+- Senior Software Engineer with 20+ years .NET/Angular experience
+- Published author of 6 technical books
+- Former CTO at 4Sec Global
 
-### Build for Production
-
-```bash
-# Build the project
-npm run build
-```
-
-Build artifacts will be stored in the `dist/` directory with production optimizations including:
-- AOT compilation
-- Tree shaking
-- Minification
-- Service worker for offline support
-
-### Running Tests
-
-```bash
-# Run unit tests
-npm test
-
-# Run tests with code coverage
-npm test -- --code-coverage
-```
-
-### Code Quality
-
-```bash
-# Lint TypeScript and HTML files
-npm run lint
-
-# Auto-fix linting issues
-npm run lint:fix
-
-# Format code with Prettier
-npm run format
-
-# Check code formatting
-npm run format:check
-```
-
-## Usage
-
-### Controls
-
-- **Play/Pause**: Start or pause the current timer
-- **Reset**: Return to the start of the current session (focus or break)
-- **Skip**: Move to the next session immediately
-- **Auto Start Toggle**: Enable/disable automatic session transitions
-
-### Timer Behavior
-
-1. **Focus Mode** (25 minutes)
-   - Blue theme color
-   - Progress fills clockwise
-   - Helps you concentrate on tasks
-
-2. **Break Mode** (5 minutes)
-   - Red/pink theme color
-   - Progress empties counterclockwise
-   - Time to rest and recharge
-
-3. **Session Transitions**
-   - Audio alert plays when switching modes
-   - If Auto Start is enabled, next session begins automatically
-   - Browser title shows countdown when timer is active
-
-## Project Structure
-
-```
-pomodoro/
-├── src/
-│   ├── app/
-│   │   ├── app.component.ts      # Main timer component
-│   │   ├── app.component.html    # Timer template
-│   │   ├── app.component.css     # Component styles
-│   │   ├── app.component.spec.ts # Unit tests
-│   │   ├── app.config.ts         # App configuration
-│   │   └── app.routes.ts         # Routing (minimal)
-│   ├── index.html                # Main HTML file
-│   ├── main.ts                   # Application entry point
-│   └── styles.css                # Global styles
-├── public/
-│   ├── icons/                    # PWA icons
-│   ├── manifest.webmanifest      # PWA manifest
-│   ├── robots.txt                # SEO configuration
-│   ├── sitemap.xml               # Site map
-│   └── mixkit-*.wav              # Alarm sound
-├── angular.json                  # Angular CLI configuration
-├── tsconfig.json                 # TypeScript configuration
-├── package.json                  # Dependencies
-└── README.md                     # This file
-```
-
-## Configuration
-
-### Timer Durations
-
-Timer durations are defined in `src/app/app.component.ts`:
-
-```typescript
-focusTime = 25 * 60; // 25 minutes in seconds
-breakTime = 5 * 60;  // 5 minutes in seconds
-```
-
-### PWA Settings
-
-Service worker configuration in `ngsw-config.json` controls:
-- Caching strategies
-- Asset groups
-- Update behavior
-
-### Build Configuration
-
-Bundle size limits and build optimizations are configured in `angular.json`.
-
-## Browser Support
-
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## SEO & Analytics
-
-- Google Tag Manager integration
-- Microsoft Clarity for user behavior analytics
-- Sitemap and robots.txt for search engine optimization
-- Open Graph and meta tags for social sharing
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow Angular style guide
-- Write unit tests for new features
-- Run linting before committing (`npm run lint:fix`)
-- Format code with Prettier (`npm run format`)
-- Maintain TypeScript strict mode compliance
+**Connect:**
+- [LinkedIn](https://www.linkedin.com/in/herbertmoroni/)
+- [Medium](https://medium.com/@herbertmoroni)
+- [Amazon Author Page](https://www.amazon.com/stores/Herbert-Moroni/author/B0BCBWB3V2?ref=sr_ntt_srch_lnk_6&qid=1763746106&sr=8-6&isDramIntegrated=true&shoppingPortalEnabled=true&ccs_id=672d33bb-79c9-4b4b-b8bf-471d6048d733) (search "Herbert Moroni")
 
 ## License
 
@@ -211,16 +108,3 @@ This project is open source and available for personal and commercial use.
 - Sound effects from Mixkit
 - Icons and UI components from Angular Material
 
-## Roadmap
-
-Future enhancements may include:
-- Customizable timer durations
-- Session history and statistics
-- Multiple timer presets
-- Sound customization
-- Keyboard shortcuts
-- Dark mode toggle
-
----
-
-**Boost your productivity today!** Visit [focusgo.app](https://focusgo.app)
