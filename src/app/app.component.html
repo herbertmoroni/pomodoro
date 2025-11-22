@@ -1,4 +1,30 @@
-<div class="timer-container">
+<mat-toolbar color="primary">
+  <img src="icons/icon-72x72.png" alt="FocusGo" class="app-logo" />
+  <span class="toolbar-title">FocusGo</span>
+  <span class="spacer"></span>
+  
+  @if (!currentUser) {
+    <button mat-button class="sign-in-button" (click)="signIn()">
+      <mat-icon>login</mat-icon>
+      Sign in
+    </button>
+  } @else {
+    <button mat-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+      {{ currentUser.displayName || currentUser.email }}
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item (click)="signOut()">
+        <mat-icon>logout</mat-icon>
+        Sign out
+      </button>
+    </mat-menu>
+  }
+</mat-toolbar>
+
+
+<div class="app-container">
+  <div class="timer-container">
   <svg class="backdrop" viewBox="0 0 100 100">
     <circle
       cx="50"
@@ -90,4 +116,5 @@
   >
     Auto Start
   </mat-slide-toggle>
+</div>
 </div>

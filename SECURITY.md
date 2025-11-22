@@ -1,4 +1,4 @@
-# Security Policy
+npm # Security Policy
 
 ## Dependency Scanning
 
