@@ -8,12 +8,7 @@
 <mat-dialog-content>
   <div class="dialog-content">
     <!-- Add button -->
-    <button
-      mat-raised-button
-      color="primary"
-      class="add-button"
-      (click)="onAdd()"
-    >
+    <button mat-raised-button color="primary" class="add-button" (click)="onAdd()">
       <mat-icon>add</mat-icon>
       Add Category
     </button>
@@ -37,11 +32,7 @@
       (cdkDropListDropped)="onDrop($event)"
       class="category-list"
     >
-      <div
-        *ngFor="let category of categories"
-        cdkDrag
-        class="category-item"
-      >
+      <div *ngFor="let category of categories" cdkDrag class="category-item">
         <div class="drag-handle" cdkDragHandle matTooltip="Drag to reorder">
           <mat-icon>drag_indicator</mat-icon>
         </div>
@@ -54,27 +45,17 @@
         </div>
 
         <div class="actions">
-          <button
-            mat-icon-button
-            (click)="onEdit(category)"
-            matTooltip="Edit category"
-          >
+          <button mat-icon-button (click)="onEdit(category)" matTooltip="Edit category">
             <mat-icon>edit</mat-icon>
           </button>
-          <button
-            mat-icon-button
-            (click)="onDelete(category)"
-            matTooltip="Delete category"
-          >
+          <button mat-icon-button (click)="onDelete(category)" matTooltip="Delete category">
             <mat-icon>delete</mat-icon>
           </button>
         </div>
       </div>
     </div>
 
-    <p *ngIf="!loading && categories.length > 0" class="hint">
-      💡 Drag categories to reorder them
-    </p>
+    <p *ngIf="!loading && categories.length > 0" class="hint">💡 Drag categories to reorder them</p>
   </div>
 </mat-dialog-content>
 
