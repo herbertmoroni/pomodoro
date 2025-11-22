@@ -50,56 +50,9 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 
 ## Data Structure & AI Integration
 
-### Session Tracking Architecture
+> **📋 Detailed AI Integration Plan:** See [AI-ROADMAP.md](./AI-ROADMAP.md) for comprehensive AI features, data structure design, and implementation strategy.
 
-The app tracks comprehensive session data designed for future AI analysis:
-
-```typescript
-interface PomodoroSession {
-  id: string;
-  categoryId: string;           // Tag/category for the session
-  categoryName: string;          // Category name (for history if renamed)
-  duration: number;              // Planned duration (seconds)
-  actualDuration: number;        // Actual time spent
-  startTime: string;             // ISO timestamp
-  endTime: string;               // ISO timestamp
-  completed: boolean;            // Natural completion vs skipped
-  dayOfWeek: number;            // 0-6 for weekly patterns
-  hourOfDay: number;            // 0-23 for daily patterns
-  consecutiveSession: number;    // Session count in current streak
-  followedBreak: boolean;        // Whether a break was taken before
-}
-```
-
-### Why This Data Structure?
-
-**For Personal Analytics:**
-- Track time investment across different life areas (work, study, personal)
-- Understand productivity patterns by time of day and day of week
-- Measure focus sustainability (consecutive sessions, completion rates)
-- Identify when breaks improve performance
-
-**For AI-Powered Insights:**
-The data structure is optimized for AI analysis to provide actionable insights:
-
-#### Pattern Recognition
-- "You complete 90% of Study sessions between 9-11 AM"
-- "Your focus drops after 3 consecutive sessions without a break"
-- "Tuesday mornings show highest completion rates for Work tasks"
-
-#### Fatigue Detection
-- "You skip 60% of sessions after the 4th consecutive pomodoro"
-- "Taking breaks increases your next session completion rate by 25%"
-
-#### Optimization Suggestions
-- "Schedule Urgent tasks in the morning when your completion rate is highest"
-- "Consider longer breaks after Study sessions - your data shows improved focus"
-- "You work best in 2-3 session blocks with breaks between"
-
-#### Smart Planning
-- Suggest optimal times for specific categories based on historical performance
-- Recommend break timing based on fatigue patterns
-- Predict realistic daily capacity based on completion history
+The app tracks detailed session data (duration, completion, timing patterns, breaks) designed for future AI analysis to provide personalized productivity insights and recommendations.
 
 ## SEO & Growth Roadmap
 

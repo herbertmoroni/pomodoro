@@ -40,6 +40,36 @@ interface PomodoroSession {
 **Current Storage**: localStorage
 **Future**: Firebase Firestore (when authentication is added)
 
+#### Why This Data Structure?
+
+**For Personal Analytics:**
+- Track time investment across different life areas (work, study, personal)
+- Understand productivity patterns by time of day and day of week
+- Measure focus sustainability (consecutive sessions, completion rates)
+- Identify when breaks improve performance
+
+**For AI-Powered Insights:**
+The data structure is optimized for AI analysis to provide actionable insights:
+
+**Pattern Recognition**
+- "You complete 90% of Study sessions between 9-11 AM"
+- "Your focus drops after 3 consecutive sessions without a break"
+- "Tuesday mornings show highest completion rates for Work tasks"
+
+**Fatigue Detection**
+- "You skip 60% of sessions after the 4th consecutive pomodoro"
+- "Taking breaks increases your next session completion rate by 25%"
+
+**Optimization Suggestions**
+- "Schedule Urgent tasks in the morning when your completion rate is highest"
+- "Consider longer breaks after Study sessions - your data shows improved focus"
+- "You work best in 2-3 session blocks with breaks between"
+
+**Smart Planning**
+- Suggest optimal times for specific categories based on historical performance
+- Recommend break timing based on fatigue patterns
+- Predict realistic daily capacity based on completion history
+
 ### AI Memory System (🔄 Planned - Phase 2)
 
 ```typescript

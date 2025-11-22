@@ -72,7 +72,5 @@ export class SessionService {
       return;
     }
 
-    // TODO: Implement stats tracking in Firestore
-    // For now, we'll keep this in localStorage as before
   }
 }
