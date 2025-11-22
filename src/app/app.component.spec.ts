@@ -10,7 +10,7 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [Title]
+      providers: [Title],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
