@@ -1,0 +1,83 @@
+<h2 mat-dialog-title>
+  <span>Manage Categories</span>
+  <button mat-icon-button class="close-button" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content>
+  <div class="dialog-content">
+    <!-- Add button -->
+    <button
+      mat-raised-button
+      color="primary"
+      class="add-button"
+      (click)="onAdd()"
+    >
+      <mat-icon>add</mat-icon>
+      Add Category
+    </button>
+
+    <!-- Loading state -->
+    <div *ngIf="loading" class="loading">
+      <p>Loading categories...</p>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!loading && categories.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">label_off</mat-icon>
+      <p>No categories yet</p>
+      <p class="hint">Click "Add Category" to create your first one</p>
+    </div>
+
+    <!-- Category list -->
+    <div
+      *ngIf="!loading && categories.length > 0"
+      cdkDropList
+      (cdkDropListDropped)="onDrop($event)"
+      class="category-list"
+    >
+      <div
+        *ngFor="let category of categories"
+        cdkDrag
+        class="category-item"
+      >
+        <div class="drag-handle" cdkDragHandle matTooltip="Drag to reorder">
+          <mat-icon>drag_indicator</mat-icon>
+        </div>
+
+        <div class="category-content">
+          <div class="category-chip" [style.background-color]="category.color">
+            <mat-icon>{{ category.icon }}</mat-icon>
+            <span>{{ category.name }}</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button
+            mat-icon-button
+            (click)="onEdit(category)"
+            matTooltip="Edit category"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            (click)="onDelete(category)"
+            matTooltip="Delete category"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p *ngIf="!loading && categories.length > 0" class="hint">
+      💡 Drag categories to reorder them
+    </p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Close</button>
+</mat-dialog-actions>

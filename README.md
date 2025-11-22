@@ -19,6 +19,7 @@ I built this as both a personal productivity tool and a learning laboratory whil
 - ✅ Firebase Authentication (Google sign-in)
 - ✅ Cloud sync with Firestore
 - ✅ User notifications with Material Snackbar
+- ✅ Custom category management (add/edit/delete/reorder)
 - 🔄 **Next: Analytics dashboard and AI integration**
 
 ## Tech Stack
@@ -49,11 +50,16 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 
 ### Current
 - ⏱️ Pomodoro timer with customizable intervals
-- 🏷️ Category/tag system (Work, Study, Personal, Urgent, Exercise)
+- 🏷️ Category/tag system (customizable per user)
+- 📝 Category management (add/edit/delete/reorder with drag-and-drop)
+- 🎨 Color picker and icon selector for categories
 - 📊 Session tracking with detailed metadata
+- 🔐 Firebase Authentication (Google sign-in)
+- ☁️ Cloud sync with Firestore (cross-device)
+- 🔒 Secure per-user data isolation
 - 🎨 Material Design UI
 - 📱 Responsive (works on mobile)
-- 💾 Local data persistence
+- 💾 Local preferences persistence
 
 ### Planned
 - 🔐 Firebase Authentication

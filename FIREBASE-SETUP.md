@@ -53,36 +53,11 @@ Quick reference for Firebase configuration in FocusGo project.
 ### 5. Set Up Security Rules
 
 1. Go to **"Rules"** tab
-2. Replace all rules with:
+2. Copy rules from `firestore.rules` file in the project root
+3. Paste into the Firebase Console editor
+4. Click **"Publish"**
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Users can only read/write their own sessions
-    match /sessions/{sessionId} {
-      allow read: if request.auth != null 
-        && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null 
-        && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if request.auth != null 
-        && resource.data.userId == request.auth.uid;
-    }
-    
-    // Users can only access their own profile
-    match /userProfiles/{userId} {
-      allow read, write: if request.auth != null 
-        && request.auth.uid == userId;
-    }
-    
-    // Users can only access their own memory (for AI)
-    match /userMemory/{userId} {
-      allow read, write: if request.auth != null 
-        && request.auth.uid == userId;
-    }
-  }
-}
-```
+> **Note:** The rules enforce per-user data isolation for sessions, categories, profiles, and AI memory.
 
 3. Click **"Publish"**
 
@@ -119,6 +94,25 @@ const firebaseConfig = {
 - ✅ Firestore database created (nam5)
 - ✅ Security rules configured
 - 🔄 Angular integration (next step)
+
+---
+
+## Deploying to Production Domain
+
+When deploying to a custom domain (e.g., focusgo.app):
+
+1. **Add Authorized Domain:**
+   - Firebase Console → Authentication → Settings → Authorized domains
+   - Add your production domain (e.g., `focusgo.app`, `www.focusgo.app`)
+
+2. **Deploy Security Rules:**
+   - Firebase Console → Firestore Database → Rules tab
+   - Copy/paste rules from `firestore.rules` file
+   - Click "Publish"
+
+3. **Test:**
+   - Sign in on production domain
+   - Verify data saves to Firestore
 
 ---
 
