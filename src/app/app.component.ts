@@ -10,6 +10,11 @@ import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { FirebaseService } from './services/firebase.service';
+import { SessionService } from './services/session.service';
+import { User } from 'firebase/auth';
 
 interface Category {
   id: string;
@@ -51,6 +56,8 @@ interface PomodoroStats {
     MatTooltipModule,
     MatMenuModule,
     MatChipsModule,
+    MatToolbarModule,
+    MatSnackBarModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -104,13 +111,26 @@ export class AppComponent implements OnInit, OnDestroy {
   consecutiveSessionCount: number = 0;
   lastSessionWasBreak: boolean = false;
 
-  constructor(private titleService: Title) {
+  // Firebase auth
+  currentUser: User | null = null;
+
+  constructor(
+    private titleService: Title,
+    private firebaseService: FirebaseService,
+    private sessionService: SessionService,
+    private snackBar: MatSnackBar,
+  ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
     this.selectedCategory = this.categories[5]; // Default to 'No Category'
   }
 
   ngOnInit() {
+    // Subscribe to auth state
+    this.firebaseService.user$.subscribe((user) => {
+      this.currentUser = user;
+    });
+
     // Feature detection: window.matchMedia and window.resizeTo
     if (
       this.isFeatureSupported('matchMedia') &&
@@ -380,7 +400,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   // Session tracking methods
-  private saveSession(completed: boolean) {
+  private async saveSession(completed: boolean) {
     if (!this.sessionStartTime) return;
 
     const endTime = new Date();
@@ -401,8 +421,32 @@ export class AppComponent implements OnInit, OnDestroy {
       followedBreak: this.lastSessionWasBreak,
     };
 
-    this.saveSessionToLocalStorage(session);
+    // Use Firestore if signed in, localStorage if not
+    if (this.currentUser) {
+      await this.saveSessionToFirestore(session);
+    } else {
+      this.saveSessionToLocalStorage(session);
+    }
+    
     this.sessionStartTime = null;
+  }
+
+  private async saveSessionToFirestore(session: PomodoroSession) {
+    try {
+      await this.sessionService.saveSession(session);
+      this.snackBar.open('Session saved to cloud ☁️', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+    } catch (error) {
+      console.error('Failed to save session to Firestore:', error);
+      this.snackBar.open('Failed to save session to cloud', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+    }
   }
 
   private saveSessionToLocalStorage(session: PomodoroSession) {
@@ -444,5 +488,32 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Failed to increment break counter:', error);
     }
+  }
+
+  async signIn() {
+    try {
+      await this.firebaseService.signInWithGoogle();
+      this.snackBar.open('Signed in successfully', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+    } catch (error) {
+      console.error('Sign in failed:', error);
+      this.snackBar.open('Sign in failed. Please try again.', 'Close', {
+        duration: 5000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+    }
+  }
+
+  async signOut() {
+    await this.firebaseService.signOut();
+    this.snackBar.open('Signed out', 'Close', {
+      duration: 2000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
 }
