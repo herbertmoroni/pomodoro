@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+
+<mat-dialog-content>
+  <div class="dialog-content">
+    <!-- Category Name -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Category Name</mat-label>
+      <input
+        matInput
+        [(ngModel)]="name"
+        placeholder="e.g., Work, Study, Personal"
+        maxlength="30"
+        (keydown.enter)="isValid && onSave()"
+      />
+      <mat-hint align="end">{{ name.length }}/30</mat-hint>
+    </mat-form-field>
+
+    <!-- Color Picker -->
+    <div class="section">
+      <h3 class="section-title">Color</h3>
+      <div class="color-grid">
+        <button
+          *ngFor="let c of colors"
+          type="button"
+          class="color-button"
+          [class.selected]="color === c"
+          [style.background-color]="c"
+          (click)="color = c"
+          [matTooltip]="c"
+        >
+          <mat-icon *ngIf="color === c" class="check-icon">check</mat-icon>
+        </button>
+        <!-- Custom color input -->
+        <div class="custom-color-wrapper">
+          <input
+            type="color"
+            [(ngModel)]="color"
+            class="custom-color-input"
+            matTooltip="Custom color"
+          />
+          <mat-icon class="palette-icon">palette</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icon Picker -->
+    <div class="section">
+      <h3 class="section-title">Icon</h3>
+      <div class="icon-grid">
+        <button
+          *ngFor="let i of icons"
+          type="button"
+          class="icon-button"
+          [class.selected]="icon === i"
+          (click)="icon = i"
+          [matTooltip]="i"
+        >
+          <mat-icon>{{ i }}</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="section">
+      <h3 class="section-title">Preview</h3>
+      <div class="preview">
+        <div class="category-chip" [style.background-color]="color">
+          <mat-icon>{{ icon }}</mat-icon>
+          <span>{{ name || 'Category Name' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!isValid">
+    Save
+  </button>
+</mat-dialog-actions>

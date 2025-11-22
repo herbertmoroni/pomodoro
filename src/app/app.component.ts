@@ -12,8 +12,13 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { FirebaseService } from './services/firebase.service';
 import { SessionService } from './services/session.service';
+import { CategoryService, Category as FirestoreCategory } from './services/category.service';
+import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
+import { CategoryDialogComponent, CategoryDialogData } from './category-dialog/category-dialog.component';
 import { User } from 'firebase/auth';
 
 interface Category {
@@ -53,6 +58,7 @@ interface PomodoroSession {
     MatChipsModule,
     MatToolbarModule,
     MatSnackBarModule,
+    MatDividerModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
@@ -91,13 +97,7 @@ export class AppComponent implements OnInit, OnDestroy {
   readonly BREAK_SPINNER_COLOR = '#fcff7a';
 
   // Categories
-  categories: Category[] = [
-    { id: 'work', name: 'Work', color: '#22c55e', icon: 'label' },
-    { id: 'study', name: 'Study', color: '#3b82f6', icon: 'label' },
-    { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'label' },
-    { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'label' },
-    { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'label' },
-  ];
+  categories: Category[] = [];
   
   // Default "no category" option
   noCategoryOption: Category = { id: 'none', name: '', color: '#6b7280', icon: 'label' };
@@ -116,7 +116,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private firebaseService: FirebaseService,
     private sessionService: SessionService,
-    private snackBar: MatSnackBar
+    private categoryService: CategoryService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
@@ -127,6 +129,12 @@ export class AppComponent implements OnInit, OnDestroy {
     // Subscribe to auth state
     this.firebaseService.user$.subscribe((user) => {
       this.currentUser = user;
+      if (user) {
+        this.loadUserCategories();
+      } else {
+        // Reset to default categories when signed out
+        this.resetToDefaultCategories();
+      }
     });
 
     // Feature detection: window.matchMedia and window.resizeTo
@@ -483,5 +491,97 @@ export class AppComponent implements OnInit, OnDestroy {
       horizontalPosition: 'center',
       verticalPosition: 'bottom',
     });
+  }
+
+  openManageCategories() {
+    this.dialog.open(ManageCategoriesComponent, {
+      width: '600px',
+      maxHeight: '80vh',
+    });
+  }
+
+  async openAddCategory() {
+    const dialogRef = this.dialog.open<CategoryDialogComponent, CategoryDialogData>(
+      CategoryDialogComponent,
+      {
+        width: '500px',
+        data: { mode: 'add' },
+      }
+    );
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        try {
+          const order = await this.categoryService.getNextOrderNumber();
+          await this.categoryService.addCategory(
+            result.name,
+            result.color,
+            result.icon,
+            order
+          );
+          this.snackBar.open('Category added', 'Close', {
+            duration: 2000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+        } catch (error) {
+          console.error('Failed to add category:', error);
+          this.snackBar.open('Failed to add category', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+        }
+      }
+    });
+  }
+
+  private loadUserCategories() {
+    this.categoryService.getUserCategories().subscribe(async (firestoreCategories) => {
+      if (firestoreCategories.length > 0) {
+        // Convert Firestore categories to local Category format
+        this.categories = firestoreCategories.map((cat) => ({
+          id: cat.id,
+          name: cat.name,
+          color: cat.color,
+          icon: cat.icon,
+        }));
+
+        // Check if selected category still exists
+        if (this.selectedCategory.id !== 'none') {
+          const stillExists = this.categories.find(
+            (cat) => cat.id === this.selectedCategory.id
+          );
+          if (!stillExists) {
+            this.selectedCategory = this.noCategoryOption;
+          }
+        }
+      } else {
+        // User has no categories yet, initialize with defaults
+        try {
+          await this.categoryService.initializeDefaultCategories();
+          this.snackBar.open('Default categories created', 'Close', {
+            duration: 2000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+          // Categories will be loaded automatically via the subscription
+        } catch (error) {
+          console.error('Failed to initialize default categories:', error);
+          // Fallback to showing defaults locally only
+          this.resetToDefaultCategories();
+        }
+      }
+    });
+  }
+
+  private resetToDefaultCategories() {
+    this.categories = [
+      { id: 'work', name: 'Work', color: '#22c55e', icon: 'label' },
+      { id: 'study', name: 'Study', color: '#3b82f6', icon: 'label' },
+      { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'label' },
+      { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'label' },
+      { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'label' },
+    ];
   }
 }
