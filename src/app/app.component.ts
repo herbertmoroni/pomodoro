@@ -393,6 +393,16 @@ export class AppComponent implements OnInit, OnDestroy {
     return this.isFocusTime ? 'arrow_forward' : 'arrow_back';
   }
 
+  onCategoryClick() {
+    if (!this.currentUser) {
+      this.snackBar.open('Sign in to track sessions', 'Close', {
+        duration: 3000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom',
+      });
+    }
+  }
+
   selectCategory(category: Category) {
     // Toggle: if clicking the same category, deselect it
     if (this.selectedCategory.id === category.id) {

@@ -51,10 +51,12 @@
         <div class="category-container">
           <button
             mat-button
-            [matMenuTriggerFor]="categoryMenu"
+            [matMenuTriggerFor]="currentUser ? categoryMenu : null"
             class="category-selector"
-            matTooltip="Click to change category"
+            [class.disabled]="!currentUser"
+            [matTooltip]="currentUser ? 'Click to change category' : 'Sign in to track sessions'"
             matTooltipShowDelay="600"
+            (click)="onCategoryClick()"
           >
             <mat-icon class="category-icon" [style.color]="selectedCategory.color">label</mat-icon>
             <span class="category-name">{{ selectedCategory.name }}</span>
