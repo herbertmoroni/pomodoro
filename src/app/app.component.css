@@ -118,12 +118,32 @@ mat-toolbar {
   display: flex !important;
   align-items: center !important;
   gap: 12px !important;
+  position: relative !important;
+  justify-content: flex-start !important;
+}
+
+.category-menu-item.selected {
+  background-color: rgba(25, 118, 210, 0.08) !important;
 }
 
 .category-menu-item mat-icon {
   font-size: 20px !important;
   width: 20px !important;
   height: 20px !important;
+  flex-shrink: 0 !important;
+}
+
+.category-menu-item span {
+  flex: 1 !important;
+  text-align: left !important;
+}
+
+.check-icon {
+  color: #1976d2 !important;
+  margin-left: auto !important;
+  flex-shrink: 0 !important;
+  position: absolute !important;
+  right: 16px !important;
 }
 
 ::ng-deep .category-menu .mat-mdc-menu-content {

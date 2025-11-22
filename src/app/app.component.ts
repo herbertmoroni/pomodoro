@@ -102,8 +102,11 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'label' },
     { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'label' },
     { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'label' },
-    { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label' },
   ];
+  
+  // Default "no category" option
+  noCategoryOption: Category = { id: 'none', name: '', color: '#6b7280', icon: 'label' };
+  
   selectedCategory: Category;
 
   // Session tracking
@@ -122,7 +125,7 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
-    this.selectedCategory = this.categories[5]; // Default to 'No Category'
+    this.selectedCategory = this.noCategoryOption; // Default to 'No Category'
   }
 
   ngOnInit() {
@@ -172,9 +175,13 @@ export class AppComponent implements OnInit, OnDestroy {
         // Load saved category
         const savedCategoryId = localStorage.getItem('selectedCategory');
         if (savedCategoryId) {
-          const category = this.categories.find((c) => c.id === savedCategoryId);
-          if (category) {
-            this.selectedCategory = category;
+          if (savedCategoryId === 'none') {
+            this.selectedCategory = this.noCategoryOption;
+          } else {
+            const category = this.categories.find((c) => c.id === savedCategoryId);
+            if (category) {
+              this.selectedCategory = category;
+            }
           }
         }
       } catch (error) {
@@ -387,12 +394,17 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   selectCategory(category: Category) {
-    this.selectedCategory = category;
+    // Toggle: if clicking the same category, deselect it
+    if (this.selectedCategory.id === category.id) {
+      this.selectedCategory = this.noCategoryOption;
+    } else {
+      this.selectedCategory = category;
+    }
 
     // Save to localStorage
     if (this.isLocalStorageAvailable()) {
       try {
-        localStorage.setItem('selectedCategory', category.id);
+        localStorage.setItem('selectedCategory', this.selectedCategory.id);
       } catch (error) {
         console.error('Failed to save category preference to localStorage:', error);
       }
