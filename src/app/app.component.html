@@ -67,6 +67,7 @@
               *ngFor="let category of categories"
               (click)="selectCategory(category)"
               class="category-menu-item"
+              [class.selected]="selectedCategory.id === category.id"
             >
               <mat-icon [style.color]="category.color">label</mat-icon>
               <span>{{ category.name }}</span>
