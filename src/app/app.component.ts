@@ -118,7 +118,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private titleService: Title,
     private firebaseService: FirebaseService,
     private sessionService: SessionService,
-    private snackBar: MatSnackBar,
+    private snackBar: MatSnackBar
   ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
@@ -427,7 +427,7 @@ export class AppComponent implements OnInit, OnDestroy {
     } else {
       this.saveSessionToLocalStorage(session);
     }
-    
+
     this.sessionStartTime = null;
   }
 
