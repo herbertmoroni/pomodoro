@@ -11,6 +11,7 @@ import {
   orderBy,
   writeBatch,
   Firestore,
+  onSnapshot,
 } from 'firebase/firestore';
 import { FirebaseService } from './firebase.service';
 import { Observable, switchMap, of } from 'rxjs';
@@ -35,35 +36,34 @@ export class CategoryService {
     this.firestore = this.firebaseService.getFirestore();
   }
 
-  /**
-   * Get all categories for the current user
-   */
+  // Get all categories for the current user with real-time updates
   getUserCategories(): Observable<Category[]> {
     return this.firebaseService.user$.pipe(
       switchMap((user) => {
         if (!user) {
           return of([]);
         }
-        return this.fetchUserCategories(user.uid);
+        return new Observable<Category[]>((observer) => {
+          const categoriesRef = collection(this.firestore, 'categories');
+          const q = query(categoriesRef, where('userId', '==', user.uid), orderBy('order', 'asc'));
+
+          // Real-time listener
+          const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const categories: Category[] = [];
+            querySnapshot.forEach((docSnapshot) => {
+              categories.push({
+                id: docSnapshot.id,
+                ...(docSnapshot.data() as Omit<Category, 'id'>),
+              });
+            });
+            observer.next(categories);
+          });
+
+          // Cleanup when unsubscribed
+          return () => unsubscribe();
+        });
       })
     );
-  }
-
-  private async fetchUserCategories(userId: string): Promise<Category[]> {
-    const categoriesRef = collection(this.firestore, 'categories');
-    const q = query(categoriesRef, where('userId', '==', userId), orderBy('order', 'asc'));
-
-    const querySnapshot = await getDocs(q);
-    const categories: Category[] = [];
-
-    querySnapshot.forEach((docSnapshot) => {
-      categories.push({
-        id: docSnapshot.id,
-        ...(docSnapshot.data() as Omit<Category, 'id'>),
-      });
-    });
-
-    return categories;
   }
 
   /**
@@ -122,17 +122,19 @@ export class CategoryService {
     await batch.commit();
   }
 
-  /**
-   * Get the next order number for a new category
-   */
+  // Get the next order number for a new category
   async getNextOrderNumber(): Promise<number> {
     const user = this.firebaseService.getCurrentUser();
     if (!user) return 0;
 
-    const categories = await this.fetchUserCategories(user.uid);
-    if (categories.length === 0) return 0;
+    const categoriesRef = collection(this.firestore, 'categories');
+    const q = query(categoriesRef, where('userId', '==', user.uid));
+    const querySnapshot = await getDocs(q);
 
-    return Math.max(...categories.map((c) => c.order)) + 1;
+    if (querySnapshot.empty) return 0;
+
+    const orders = querySnapshot.docs.map((doc) => (doc.data() as Category).order);
+    return Math.max(...orders) + 1;
   }
 
   /**
