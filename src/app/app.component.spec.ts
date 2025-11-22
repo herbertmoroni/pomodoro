@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { Title } from '@angular/platform-browser';
+import { ComponentFixture } from '@angular/core/testing';
 
 describe('AppComponent', () => {
   let component: AppComponent;
-  let fixture: any;
+  let fixture: ComponentFixture<AppComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

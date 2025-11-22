@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Subscription, timer } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
@@ -409,7 +408,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
       // Save back to localStorage
       localStorage.setItem('pomodoroStats', JSON.stringify(stats));
-      console.log('Session saved:', session);
     } catch (error) {
       console.error('Failed to save session to localStorage:', error);
     }
