@@ -9,6 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CategoryService, Category } from '../services/category.service';
 import { CategoryDialogComponent, CategoryDialogData } from '../category-dialog/category-dialog.component';
+import { LoggerService } from '../services/logger.service';
 
 @Component({
   selector: 'app-manage-categories',
@@ -33,7 +34,8 @@ export class ManageCategoriesComponent implements OnInit {
     public dialogRef: MatDialogRef<ManageCategoriesComponent>,
     private dialog: MatDialog,
     private categoryService: CategoryService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private logger: LoggerService
   ) {}
 
   async ngOnInit() {
@@ -48,7 +50,7 @@ export class ManageCategoriesComponent implements OnInit {
         this.loading = false;
       });
     } catch (error) {
-      console.error('Failed to load categories:', error);
+      this.logger.error('Failed to load categories:', error);
       this.snackBar.open('Failed to load categories', 'Close', { duration: 3000 });
       this.loading = false;
     }
@@ -75,7 +77,7 @@ export class ManageCategoriesComponent implements OnInit {
           );
           this.snackBar.open('Category added', 'Close', { duration: 2000 });
         } catch (error) {
-          console.error('Failed to add category:', error);
+          this.logger.error('Failed to add category:', error);
           this.snackBar.open('Failed to add category', 'Close', { duration: 3000 });
         }
       }
@@ -97,7 +99,7 @@ export class ManageCategoriesComponent implements OnInit {
           await this.categoryService.updateCategory(category.id, result);
           this.snackBar.open('Category updated', 'Close', { duration: 2000 });
         } catch (error) {
-          console.error('Failed to update category:', error);
+          this.logger.error('Failed to update category:', error);
           this.snackBar.open('Failed to update category', 'Close', { duration: 3000 });
         }
       }
@@ -113,7 +115,7 @@ export class ManageCategoriesComponent implements OnInit {
       await this.categoryService.deleteCategory(category.id);
       this.snackBar.open('Category deleted', 'Close', { duration: 2000 });
     } catch (error) {
-      console.error('Failed to delete category:', error);
+      this.logger.error('Failed to delete category:', error);
       this.snackBar.open('Failed to delete category', 'Close', { duration: 3000 });
     }
   }
@@ -131,7 +133,7 @@ export class ManageCategoriesComponent implements OnInit {
       await this.categoryService.reorderCategories(updates);
       this.snackBar.open('Order saved', 'Close', { duration: 2000 });
     } catch (error) {
-      console.error('Failed to reorder categories:', error);
+      this.logger.error('Failed to reorder categories:', error);
       this.snackBar.open('Failed to save order', 'Close', { duration: 3000 });
       // Reload to revert visual change
       await this.loadCategories();

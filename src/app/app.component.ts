@@ -17,6 +17,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { FirebaseService } from './services/firebase.service';
 import { SessionService } from './services/session.service';
 import { CategoryService, Category as FirestoreCategory } from './services/category.service';
+import { LoggerService } from './services/logger.service';
 import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
 import { CategoryDialogComponent, CategoryDialogData } from './category-dialog/category-dialog.component';
 import { User } from 'firebase/auth';
@@ -118,7 +119,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private sessionService: SessionService,
     private categoryService: CategoryService,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private logger: LoggerService
   ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
@@ -146,7 +148,7 @@ export class AppComponent implements OnInit, OnDestroy {
         try {
           window.resizeTo(this.PWA_WINDOW_WIDTH, this.PWA_WINDOW_HEIGHT);
         } catch (error) {
-          console.warn('Unable to resize window:', error);
+          this.logger.warn('Unable to resize window:', error);
         }
       }
     }
@@ -159,12 +161,12 @@ export class AppComponent implements OnInit, OnDestroy {
         this.alarmSound = new Audio('mixkit-interface-hint-notification-911.wav');
         this.alarmSound.load();
       } catch (error) {
-        console.error('Failed to load alarm sound:', error);
+        this.logger.error('Failed to load alarm sound:', error);
         // Create a dummy audio element to prevent errors when playAlarm is called
         this.alarmSound = new Audio();
       }
     } else {
-      console.warn('Audio API not supported');
+      this.logger.warn('Audio API not supported');
       // Create a dummy audio element
       this.alarmSound = { play: () => Promise.resolve() } as HTMLAudioElement;
     }
@@ -188,11 +190,11 @@ export class AppComponent implements OnInit, OnDestroy {
           }
         }
       } catch (error) {
-        console.warn('Failed to load preferences from localStorage:', error);
+        this.logger.warn('Failed to load preferences from localStorage:', error);
         this.autoStart = false; // Default value
       }
     } else {
-      console.warn('localStorage is not available');
+      this.logger.warn('localStorage is not available');
       this.autoStart = false; // Default value
     }
   }
@@ -240,10 +242,10 @@ export class AppComponent implements OnInit, OnDestroy {
       try {
         localStorage.setItem('autoStart', this.autoStart.toString());
       } catch (error) {
-        console.error('Failed to save autoStart preference to localStorage:', error);
+        this.logger.error('Failed to save autoStart preference to localStorage:', error);
       }
     } else {
-      console.warn('localStorage is not available, preference cannot be saved');
+      this.logger.warn('localStorage is not available, preference cannot be saved');
     }
   }
 
@@ -314,7 +316,7 @@ export class AppComponent implements OnInit, OnDestroy {
   playAlarm() {
     if (this.alarmSound) {
       this.alarmSound.play().catch((error) => {
-        console.warn('Failed to play alarm sound:', error);
+        this.logger.warn('Failed to play alarm sound:', error);
         // Alarm playback failed (possibly due to browser autoplay policy)
       });
     }
@@ -413,7 +415,7 @@ export class AppComponent implements OnInit, OnDestroy {
       try {
         localStorage.setItem('selectedCategory', this.selectedCategory.id);
       } catch (error) {
-        console.error('Failed to save category preference to localStorage:', error);
+        this.logger.error('Failed to save category preference to localStorage:', error);
       }
     }
   }
@@ -457,7 +459,7 @@ export class AppComponent implements OnInit, OnDestroy {
         verticalPosition: 'bottom',
       });
     } catch (error) {
-      console.error('Failed to save session to Firestore:', error);
+      this.logger.error('Failed to save session to Firestore:', error);
       this.snackBar.open('Failed to save session to cloud', 'Close', {
         duration: 5000,
         horizontalPosition: 'center',
@@ -475,7 +477,7 @@ export class AppComponent implements OnInit, OnDestroy {
         verticalPosition: 'bottom',
       });
     } catch (error) {
-      console.error('Sign in failed:', error);
+      this.logger.error('Sign in failed:', error);
       this.snackBar.open('Sign in failed. Please try again.', 'Close', {
         duration: 5000,
         horizontalPosition: 'center',
@@ -525,7 +527,7 @@ export class AppComponent implements OnInit, OnDestroy {
             verticalPosition: 'bottom',
           });
         } catch (error) {
-          console.error('Failed to add category:', error);
+          this.logger.error('Failed to add category:', error);
           this.snackBar.open('Failed to add category', 'Close', {
             duration: 3000,
             horizontalPosition: 'center',
@@ -567,7 +569,7 @@ export class AppComponent implements OnInit, OnDestroy {
           });
           // Categories will be loaded automatically via the subscription
         } catch (error) {
-          console.error('Failed to initialize default categories:', error);
+          this.logger.error('Failed to initialize default categories:', error);
           // Fallback to showing defaults locally only
           this.resetToDefaultCategories();
         }
