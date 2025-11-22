@@ -19,7 +19,10 @@ import { SessionService } from './services/session.service';
 import { CategoryService, Category as FirestoreCategory } from './services/category.service';
 import { LoggerService } from './services/logger.service';
 import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
-import { CategoryDialogComponent, CategoryDialogData } from './category-dialog/category-dialog.component';
+import {
+  CategoryDialogComponent,
+  CategoryDialogData,
+} from './category-dialog/category-dialog.component';
 import { User } from 'firebase/auth';
 
 interface Category {
@@ -99,10 +102,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Categories
   categories: Category[] = [];
-  
+
   // Default "no category" option
   noCategoryOption: Category = { id: 'none', name: '', color: '#6b7280', icon: 'label' };
-  
+
   selectedCategory: Category;
 
   // Session tracking
@@ -515,12 +518,7 @@ export class AppComponent implements OnInit, OnDestroy {
       if (result) {
         try {
           const order = await this.categoryService.getNextOrderNumber();
-          await this.categoryService.addCategory(
-            result.name,
-            result.color,
-            result.icon,
-            order
-          );
+          await this.categoryService.addCategory(result.name, result.color, result.icon, order);
           this.snackBar.open('Category added', 'Close', {
             duration: 2000,
             horizontalPosition: 'center',
@@ -551,9 +549,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
         // Check if selected category still exists
         if (this.selectedCategory.id !== 'none') {
-          const stillExists = this.categories.find(
-            (cat) => cat.id === this.selectedCategory.id
-          );
+          const stillExists = this.categories.find((cat) => cat.id === this.selectedCategory.id);
           if (!stillExists) {
             this.selectedCategory = this.noCategoryOption;
           }

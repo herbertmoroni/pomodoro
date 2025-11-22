@@ -51,11 +51,7 @@ export class CategoryService {
 
   private async fetchUserCategories(userId: string): Promise<Category[]> {
     const categoriesRef = collection(this.firestore, 'categories');
-    const q = query(
-      categoriesRef,
-      where('userId', '==', userId),
-      orderBy('order', 'asc')
-    );
+    const q = query(categoriesRef, where('userId', '==', userId), orderBy('order', 'asc'));
 
     const querySnapshot = await getDocs(q);
     const categories: Category[] = [];
@@ -73,12 +69,7 @@ export class CategoryService {
   /**
    * Add a new category
    */
-  async addCategory(
-    name: string,
-    color: string,
-    icon: string,
-    order: number
-  ): Promise<string> {
+  async addCategory(name: string, color: string, icon: string, order: number): Promise<string> {
     const user = this.firebaseService.getCurrentUser();
     if (!user) {
       throw new Error('User must be signed in to add categories');

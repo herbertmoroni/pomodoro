@@ -8,7 +8,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { CategoryService, Category } from '../services/category.service';
-import { CategoryDialogComponent, CategoryDialogData } from '../category-dialog/category-dialog.component';
+import {
+  CategoryDialogComponent,
+  CategoryDialogData,
+} from '../category-dialog/category-dialog.component';
 import { LoggerService } from '../services/logger.service';
 
 @Component({
@@ -69,12 +72,7 @@ export class ManageCategoriesComponent implements OnInit {
       if (result) {
         try {
           const order = await this.categoryService.getNextOrderNumber();
-          await this.categoryService.addCategory(
-            result.name,
-            result.color,
-            result.icon,
-            order
-          );
+          await this.categoryService.addCategory(result.name, result.color, result.icon, order);
           this.snackBar.open('Category added', 'Close', { duration: 2000 });
         } catch (error) {
           this.logger.error('Failed to add category:', error);

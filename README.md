@@ -67,7 +67,7 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 - 🤖 AI-powered time pattern analysis
 - 📈 Advanced analytics dashboard
 - � Visual reports and charts
-- �🔄 Data export functionality
+- � Firebase Crashlytics for tracking user errors in production (authentication failures, Firestore errors, etc.)
 
 ## Data Structure & AI Integration
 
