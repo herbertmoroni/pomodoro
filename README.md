@@ -12,18 +12,22 @@ I built this as both a personal productivity tool and a learning laboratory whil
 **Current Status:**
 - ✅ Core Pomodoro timer functionality
 - ✅ Category/tag system for organizing sessions
-- ✅ Session tracking with localStorage (Phase 1)
+- ✅ Session tracking with comprehensive metadata
 - ✅ Progressive Web App (works offline, installs on devices)
-- ✅ Material Design UI
+- ✅ Material Design UI with toolbar
 - ✅ AWS Amplify serverless deployment
-- 🔄 **Planning Firebase integration** for session sync and AI analysis
-- 🔄 **Exploring AI integration** for time pattern analysis
+- ✅ Firebase Authentication (Google sign-in)
+- ✅ Cloud sync with Firestore
+- ✅ User notifications with Material Snackbar
+- 🔄 **Next: Analytics dashboard and AI integration**
 
 ## Tech Stack
 
-- **Frontend:** Angular 17 + Angular Material
+- **Frontend:** Angular 18 + Angular Material
+- **Authentication:** Firebase Auth (Google OAuth)
+- **Database:** Firebase Firestore
 - **Hosting:** AWS Amplify (serverless)
-- **Future:** Evaluating AI APIs for time analysis features
+- **Future:** AI APIs for time analysis features
 
 ## What I'm Learning
 
@@ -114,20 +118,20 @@ The data structure is optimized for AI analysis to provide actionable insights:
 
 ### Storage Strategy
 
-**Phase 1 (Current):** localStorage
+**Phase 1 (Completed):** localStorage
 - Simple implementation
 - No backend required
 - Works offline
 - Data viewable in browser DevTools
 
-**Phase 2 (Planned):** Firebase Firestore
-- Cross-device sync
-- Safe from browser data clearing
+**Phase 2 (Current):** Firebase Firestore
+- ✅ Cross-device sync
+- ✅ Safe from browser data clearing
+- ✅ Firebase Auth for secure access
+- ✅ Multi-user with data isolation
 - Ready for AI API integration
-- Enables multi-user features
-- Firebase Auth for secure access
 
-The abstraction layer makes migration straightforward without changing tracking logic.
+Users sign in with Google to sync sessions across devices. Signed-out users still work with localStorage only.
 
 ## SEO & Growth Roadmap
 
