@@ -11,6 +11,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { FirebaseService } from './services/firebase.service';
+import { User } from 'firebase/auth';
 
 interface Category {
   id: string;
@@ -106,13 +108,24 @@ export class AppComponent implements OnInit, OnDestroy {
   consecutiveSessionCount: number = 0;
   lastSessionWasBreak: boolean = false;
 
-  constructor(private titleService: Title) {
+  // Firebase auth
+  currentUser: User | null = null;
+
+  constructor(
+    private titleService: Title,
+    private firebaseService: FirebaseService,
+  ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
     this.selectedCategory = this.categories[5]; // Default to 'No Category'
   }
 
   ngOnInit() {
+    // Subscribe to auth state
+    this.firebaseService.user$.subscribe((user) => {
+      this.currentUser = user;
+    });
+
     // Feature detection: window.matchMedia and window.resizeTo
     if (
       this.isFeatureSupported('matchMedia') &&
@@ -446,5 +459,17 @@ export class AppComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Failed to increment break counter:', error);
     }
+  }
+
+  async signIn() {
+    try {
+      await this.firebaseService.signInWithGoogle();
+    } catch (error) {
+      console.error('Sign in failed:', error);
+    }
+  }
+
+  async signOut() {
+    await this.firebaseService.signOut();
   }
 }
