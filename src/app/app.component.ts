@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 interface Category {
   id: string;
@@ -51,6 +52,7 @@ interface PomodoroStats {
     MatTooltipModule,
     MatMenuModule,
     MatChipsModule,
+    MatToolbarModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',

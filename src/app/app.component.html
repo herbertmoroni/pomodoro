@@ -1,4 +1,15 @@
-<div class="timer-container">
+<mat-toolbar color="primary">
+  <img src="icons/icon-72x72.png" alt="FocusGo" class="app-logo" />
+  <span class="toolbar-title">FocusGo</span>
+  <span class="spacer"></span>
+  <button mat-button class="sign-in-button">
+    <mat-icon>login</mat-icon>
+    Sign in
+  </button>
+</mat-toolbar>
+
+<div class="app-container">
+  <div class="timer-container">
   <svg class="backdrop" viewBox="0 0 100 100">
     <circle
       cx="50"
@@ -90,4 +101,5 @@
   >
     Auto Start
   </mat-slide-toggle>
+</div>
 </div>
