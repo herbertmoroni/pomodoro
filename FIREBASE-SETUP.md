@@ -61,8 +61,12 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Users can only read/write their own sessions
     match /sessions/{sessionId} {
-      allow read, write: if request.auth != null 
+      allow read: if request.auth != null 
+        && resource.data.userId == request.auth.uid;
+      allow create: if request.auth != null 
         && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null 
+        && resource.data.userId == request.auth.uid;
     }
     
     // Users can only access their own profile
