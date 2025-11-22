@@ -95,8 +95,22 @@ The application uses these third-party services:
 
 - **Google Tag Manager**: Analytics and tracking
 - **Microsoft Clarity**: User behavior analytics
+- **Firebase**: Authentication and database backend
 
 These services are loaded from trusted CDNs and follow best security practices.
+
+#### Optional: Firebase API Key Domain Restrictions
+
+For extra security, you can restrict your Firebase API key to only work on `focusgo.app`:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Select your focusgo project
+3. **APIs & Services** → **Credentials**
+4. Find your API key
+5. Add **Application restrictions** → **HTTP referrers**
+6. Add:
+   - `https://focusgo.app/*`
+   - `http://localhost/*`
 
 ### Browser Security
 
