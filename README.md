@@ -11,9 +11,12 @@ I built this as both a personal productivity tool and a learning laboratory whil
 
 **Current Status:**
 - ✅ Core Pomodoro timer functionality
+- ✅ Category/tag system for organizing sessions
+- ✅ Session tracking with localStorage (Phase 1)
 - ✅ Progressive Web App (works offline, installs on devices)
 - ✅ Material Design UI
 - ✅ AWS Amplify serverless deployment
+- 🔄 **Planning Firebase integration** for session sync and AI analysis
 - 🔄 **Exploring AI integration** for time pattern analysis
 
 ## Tech Stack
@@ -42,15 +45,89 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 
 ### Current
 - ⏱️ Pomodoro timer with customizable intervals
-- 📊 Session tracking
+- 🏷️ Category/tag system (Work, Study, Personal, Urgent, Exercise)
+- 📊 Session tracking with detailed metadata
 - 🎨 Material Design UI
 - 📱 Responsive (works on mobile)
 - 💾 Local data persistence
 
 ### Planned
+- 🔐 Firebase Authentication
+- ☁️ Cloud sync with Firebase Firestore
 - 🤖 AI-powered time pattern analysis
 - 📈 Advanced analytics dashboard
-- 🔄 Data export functionality
+- � Visual reports and charts
+- �🔄 Data export functionality
+
+## Data Structure & AI Integration
+
+### Session Tracking Architecture
+
+The app tracks comprehensive session data designed for future AI analysis:
+
+```typescript
+interface PomodoroSession {
+  id: string;
+  categoryId: string;           // Tag/category for the session
+  categoryName: string;          // Category name (for history if renamed)
+  duration: number;              // Planned duration (seconds)
+  actualDuration: number;        // Actual time spent
+  startTime: string;             // ISO timestamp
+  endTime: string;               // ISO timestamp
+  completed: boolean;            // Natural completion vs skipped
+  dayOfWeek: number;            // 0-6 for weekly patterns
+  hourOfDay: number;            // 0-23 for daily patterns
+  consecutiveSession: number;    // Session count in current streak
+  followedBreak: boolean;        // Whether a break was taken before
+}
+```
+
+### Why This Data Structure?
+
+**For Personal Analytics:**
+- Track time investment across different life areas (work, study, personal)
+- Understand productivity patterns by time of day and day of week
+- Measure focus sustainability (consecutive sessions, completion rates)
+- Identify when breaks improve performance
+
+**For AI-Powered Insights:**
+The data structure is optimized for AI analysis to provide actionable insights:
+
+#### Pattern Recognition
+- "You complete 90% of Study sessions between 9-11 AM"
+- "Your focus drops after 3 consecutive sessions without a break"
+- "Tuesday mornings show highest completion rates for Work tasks"
+
+#### Fatigue Detection
+- "You skip 60% of sessions after the 4th consecutive pomodoro"
+- "Taking breaks increases your next session completion rate by 25%"
+
+#### Optimization Suggestions
+- "Schedule Urgent tasks in the morning when your completion rate is highest"
+- "Consider longer breaks after Study sessions - your data shows improved focus"
+- "You work best in 2-3 session blocks with breaks between"
+
+#### Smart Planning
+- Suggest optimal times for specific categories based on historical performance
+- Recommend break timing based on fatigue patterns
+- Predict realistic daily capacity based on completion history
+
+### Storage Strategy
+
+**Phase 1 (Current):** localStorage
+- Simple implementation
+- No backend required
+- Works offline
+- Data viewable in browser DevTools
+
+**Phase 2 (Planned):** Firebase Firestore
+- Cross-device sync
+- Safe from browser data clearing
+- Ready for AI API integration
+- Enables multi-user features
+- Firebase Auth for secure access
+
+The abstraction layer makes migration straightforward without changing tracking logic.
 
 ## Installation
 
