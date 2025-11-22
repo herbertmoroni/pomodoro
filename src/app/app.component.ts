@@ -22,15 +22,15 @@ interface PomodoroSession {
   id: string;
   categoryId: string;
   categoryName: string;
-  duration: number;              // Planned duration in seconds
-  actualDuration: number;        // Actual time spent in seconds
-  startTime: string;             // ISO date string
-  endTime: string;               // ISO date string
-  completed: boolean;            // true = finished, false = skipped
-  dayOfWeek: number;            // 0-6
-  hourOfDay: number;            // 0-23
-  consecutiveSession: number;    // Which pomodoro in a row
-  followedBreak: boolean;        // Did they take the break before this
+  duration: number; // Planned duration in seconds
+  actualDuration: number; // Actual time spent in seconds
+  startTime: string; // ISO date string
+  endTime: string; // ISO date string
+  completed: boolean; // true = finished, false = skipped
+  dayOfWeek: number; // 0-6
+  hourOfDay: number; // 0-23
+  consecutiveSession: number; // Which pomodoro in a row
+  followedBreak: boolean; // Did they take the break before this
 }
 
 interface PomodoroStats {
@@ -41,7 +41,17 @@ interface PomodoroStats {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [MatProgressSpinnerModule, MatIconModule, MatButtonModule, CommonModule, MatSlideToggleModule, FormsModule, MatTooltipModule, MatMenuModule, MatChipsModule],
+  imports: [
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatButtonModule,
+    CommonModule,
+    MatSlideToggleModule,
+    FormsModule,
+    MatTooltipModule,
+    MatMenuModule,
+    MatChipsModule,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
@@ -85,7 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 'personal', name: 'Personal', color: '#a855f7', icon: 'label' },
     { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'label' },
     { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'label' },
-    { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label' }
+    { id: 'none', name: 'Tag', color: '#6b7280', icon: 'label' },
   ];
   selectedCategory: Category;
 
@@ -102,7 +112,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Feature detection: window.matchMedia and window.resizeTo
-    if (this.isFeatureSupported('matchMedia') && window.matchMedia('(display-mode: standalone)').matches) {
+    if (
+      this.isFeatureSupported('matchMedia') &&
+      window.matchMedia('(display-mode: standalone)').matches
+    ) {
       if (this.isFeatureSupported('resizeTo')) {
         try {
           window.resizeTo(this.PWA_WINDOW_WIDTH, this.PWA_WINDOW_HEIGHT);
@@ -135,11 +148,11 @@ export class AppComponent implements OnInit, OnDestroy {
       try {
         const savedAutoStart = localStorage.getItem('autoStart');
         this.autoStart = savedAutoStart === 'true';
-        
+
         // Load saved category
         const savedCategoryId = localStorage.getItem('selectedCategory');
         if (savedCategoryId) {
-          const category = this.categories.find(c => c.id === savedCategoryId);
+          const category = this.categories.find((c) => c.id === savedCategoryId);
           if (category) {
             this.selectedCategory = category;
           }
@@ -162,7 +175,11 @@ export class AppComponent implements OnInit, OnDestroy {
       case 'matchMedia':
         return typeof window !== 'undefined' && 'matchMedia' in window;
       case 'resizeTo':
-        return typeof window !== 'undefined' && 'resizeTo' in window && typeof window.resizeTo === 'function';
+        return (
+          typeof window !== 'undefined' &&
+          'resizeTo' in window &&
+          typeof window.resizeTo === 'function'
+        );
       case 'Audio':
         return typeof window !== 'undefined' && 'Audio' in window;
       default:
@@ -214,9 +231,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   get spinnerStyle() {
-    return { 'stroke': this.spinnerColor };
+    return { stroke: this.spinnerColor };
   }
-  
+
   toggleTimer() {
     if (this.isRunning) {
       this.pauseTimer();
@@ -227,8 +244,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   startTimer() {
     this.isRunning = true;
-    this.startTime = Date.now() - ((this.getTotalTime() - this.currentTime) * 1000);
-    
+    this.startTime = Date.now() - (this.getTotalTime() - this.currentTime) * 1000;
+
     // Track focus session start
     if (this.isFocusTime && !this.sessionStartTime) {
       this.sessionStartTime = new Date();
@@ -239,7 +256,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.lastSessionWasBreak = false;
       }
     }
-    
+
     this.timerSubscription = timer(0, this.TIMER_UPDATE_INTERVAL_MS).subscribe(() => {
       const elapsedSeconds = Math.floor((Date.now() - this.startTime) / 1000);
       this.currentTime = this.getTotalTime() - elapsedSeconds;
@@ -278,7 +295,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (this.isFocusTime) {
       this.sessionStartTime = null;
     }
-    
+
     this.stopTimer();
     this.currentTime = this.getTotalTime();
     this.updateDisplay();
@@ -298,13 +315,13 @@ export class AppComponent implements OnInit, OnDestroy {
     if (!this.isFocusTime && this.sessionStartTime) {
       this.saveSession(true);
     }
-    
+
     // Track break completion
     if (!this.isFocusTime) {
       this.incrementBreakCounter();
       this.lastSessionWasBreak = true;
     }
-    
+
     this.stopTimer();
     this.playAlarm(); // Always play the alarm
     this.isFocusTime = !this.isFocusTime;
@@ -318,7 +335,7 @@ export class AppComponent implements OnInit, OnDestroy {
   updateDisplay() {
     if (this.isFocusTime) {
       // For focus time, progress goes from 0 to 100 (clockwise)
-      this.progress = 100 - ((this.currentTime / this.getTotalTime()) * 100);
+      this.progress = 100 - (this.currentTime / this.getTotalTime()) * 100;
     } else {
       // For break time, progress goes from 100 to 0 (counterclockwise)
       this.progress = (this.currentTime / this.getTotalTime()) * 100;
@@ -351,7 +368,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   selectCategory(category: Category) {
     this.selectedCategory = category;
-    
+
     // Save to localStorage
     if (this.isLocalStorageAvailable()) {
       try {
@@ -381,7 +398,7 @@ export class AppComponent implements OnInit, OnDestroy {
       dayOfWeek: this.sessionStartTime.getDay(),
       hourOfDay: this.sessionStartTime.getHours(),
       consecutiveSession: this.consecutiveSessionCount,
-      followedBreak: this.lastSessionWasBreak
+      followedBreak: this.lastSessionWasBreak,
     };
 
     this.saveSessionToLocalStorage(session);
@@ -394,8 +411,8 @@ export class AppComponent implements OnInit, OnDestroy {
     try {
       // Get existing sessions
       const existingData = localStorage.getItem('pomodoroStats');
-      const stats: PomodoroStats = existingData 
-        ? JSON.parse(existingData) 
+      const stats: PomodoroStats = existingData
+        ? JSON.parse(existingData)
         : { totalBreaks: 0, sessions: [] };
 
       // Add new session
@@ -418,8 +435,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     try {
       const existingData = localStorage.getItem('pomodoroStats');
-      const stats: PomodoroStats = existingData 
-        ? JSON.parse(existingData) 
+      const stats: PomodoroStats = existingData
+        ? JSON.parse(existingData)
         : { totalBreaks: 0, sessions: [] };
 
       stats.totalBreaks++;
