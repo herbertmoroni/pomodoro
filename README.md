@@ -129,6 +129,20 @@ The data structure is optimized for AI analysis to provide actionable insights:
 
 The abstraction layer makes migration straightforward without changing tracking logic.
 
+## SEO & Growth Roadmap
+
+### Short Term (Easy Wins)
+- Add Schema.org structured data (JSON-LD) for SoftwareApplication
+- Create a blog section with productivity tips
+- Add an about/features page (more indexable content)
+- Implement breadcrumbs when you add more pages
+
+### Long Term
+- Content marketing - Write articles about productivity
+- Backlinks - Submit to PWA directories
+- Social proof - Add testimonials/reviews
+- Performance - Keep Lighthouse scores high (already good with PWA)
+
 ## Installation
 
 **Desktop (Chrome, Edge, Brave):**
