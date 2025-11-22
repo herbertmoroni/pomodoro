@@ -1,12 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  collection,
-  addDoc,
-  query,
-  where,
-  getDocs,
-  Timestamp,
-} from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { FirebaseService } from './firebase.service';
 
 export interface PomodoroSession {
