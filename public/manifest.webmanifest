@@ -1,13 +1,13 @@
 {
-  "name": "Pomodoro Timer",
-  "short_name": "Pomodoro",
-  "description": "A simple and effective Pomodoro timer to boost your productivity",
+  "name": "FocusGo - Pomodoro Timer & Productivity Tracker",
+  "short_name": "FocusGo",
+  "description": "Free Pomodoro timer with task categorization, session tracking, and productivity insights. Works offline. Boost your focus and understand where your time goes.",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
   "start_url": "/",
   "orientation": "any",
-  "categories": ["productivity", "utilities"],
+  "categories": ["productivity", "utilities", "lifestyle"],
   "icons": [
     {
       "src": "icons/icon-72x72.png",
