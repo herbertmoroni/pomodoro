@@ -38,11 +38,6 @@ interface PomodoroSession {
   followedBreak: boolean; // Did they take the break before this
 }
 
-interface PomodoroStats {
-  totalBreaks: number;
-  sessions: PomodoroSession[];
-}
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -343,12 +338,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this.saveSession(true);
     }
 
-    // Track break completion
-    if (!this.isFocusTime) {
-      this.incrementBreakCounter();
-      this.lastSessionWasBreak = true;
-    }
-
     this.stopTimer();
     this.playAlarm(); // Always play the alarm
     this.isFocusTime = !this.isFocusTime;
@@ -443,11 +432,9 @@ export class AppComponent implements OnInit, OnDestroy {
       followedBreak: this.lastSessionWasBreak,
     };
 
-    // Use Firestore if signed in, localStorage if not
+    // Only save if user is signed in
     if (this.currentUser) {
       await this.saveSessionToFirestore(session);
-    } else {
-      this.saveSessionToLocalStorage(session);
     }
 
     this.sessionStartTime = null;
@@ -468,47 +455,6 @@ export class AppComponent implements OnInit, OnDestroy {
         horizontalPosition: 'center',
         verticalPosition: 'bottom',
       });
-    }
-  }
-
-  private saveSessionToLocalStorage(session: PomodoroSession) {
-    if (!this.isLocalStorageAvailable()) return;
-
-    try {
-      // Get existing sessions
-      const existingData = localStorage.getItem('pomodoroStats');
-      const stats: PomodoroStats = existingData
-        ? JSON.parse(existingData)
-        : { totalBreaks: 0, sessions: [] };
-
-      // Add new session
-      stats.sessions.push(session);
-
-      // Keep only last 500 sessions to avoid storage limits
-      if (stats.sessions.length > 500) {
-        stats.sessions = stats.sessions.slice(-500);
-      }
-
-      // Save back to localStorage
-      localStorage.setItem('pomodoroStats', JSON.stringify(stats));
-    } catch (error) {
-      console.error('Failed to save session to localStorage:', error);
-    }
-  }
-
-  private incrementBreakCounter() {
-    if (!this.isLocalStorageAvailable()) return;
-
-    try {
-      const existingData = localStorage.getItem('pomodoroStats');
-      const stats: PomodoroStats = existingData
-        ? JSON.parse(existingData)
-        : { totalBreaks: 0, sessions: [] };
-
-      stats.totalBreaks++;
-      localStorage.setItem('pomodoroStats', JSON.stringify(stats));
-    } catch (error) {
-      console.error('Failed to increment break counter:', error);
     }
   }
 
