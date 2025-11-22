@@ -38,6 +38,7 @@ This project let me explore AWS Amplify's serverless architecture with Angular:
 - CI/CD pipeline integration
 - Environment-based configuration
 - Cost-effective hosting for personal projects
+- Firebase Crashlytics for tracking user errors in production (authentication failures, Firestore errors, etc.)
 
 ### AI Integration Exploration (In Progress)
 Currently evaluating different approaches for adding AI-powered time analysis:
@@ -46,28 +47,6 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 - Researching security patterns for AI integration
 - These learnings will inform the AI Security book
 
-## Features
-
-### Current
-- ⏱️ Pomodoro timer with customizable intervals
-- 🏷️ Category/tag system (customizable per user)
-- 📝 Category management (add/edit/delete/reorder with drag-and-drop)
-- 🎨 Color picker and icon selector for categories
-- 📊 Session tracking with detailed metadata
-- 🔐 Firebase Authentication (Google sign-in)
-- ☁️ Cloud sync with Firestore (cross-device)
-- 🔒 Secure per-user data isolation
-- 🎨 Material Design UI
-- 📱 Responsive (works on mobile)
-- 💾 Local preferences persistence
-
-### Planned
-- 🔐 Firebase Authentication
-- ☁️ Cloud sync with Firebase Firestore
-- 🤖 AI-powered time pattern analysis
-- 📈 Advanced analytics dashboard
-- � Visual reports and charts
-- � Firebase Crashlytics for tracking user errors in production (authentication failures, Firestore errors, etc.)
 
 ## Data Structure & AI Integration
 
@@ -122,23 +101,6 @@ The data structure is optimized for AI analysis to provide actionable insights:
 - Recommend break timing based on fatigue patterns
 - Predict realistic daily capacity based on completion history
 
-### Storage Strategy
-
-**Phase 1 (Completed):** localStorage
-- Simple implementation
-- No backend required
-- Works offline
-- Data viewable in browser DevTools
-
-**Phase 2 (Current):** Firebase Firestore
-- ✅ Cross-device sync
-- ✅ Safe from browser data clearing
-- ✅ Firebase Auth for secure access
-- ✅ Multi-user with data isolation
-- Ready for AI API integration
-
-Users sign in with Google to sync sessions across devices. Signed-out users still work with localStorage only.
-
 ## SEO & Growth Roadmap
 
 ### Short Term (Easy Wins)
@@ -150,19 +112,7 @@ Users sign in with Google to sync sessions across devices. Signed-out users stil
 ### Long Term
 - Content marketing - Write articles about productivity
 - Backlinks - Submit to PWA directories
-- Social proof - Add testimonials/reviews
 - Performance - Keep Lighthouse scores high (already good with PWA)
-
-## Installation
-
-**Desktop (Chrome, Edge, Brave):**
-Visit [focusgo.app](https://focusgo.app) → Click install icon in address bar
-
-**Mobile (Android):**
-Visit site → Tap "Add to Home Screen"
-
-**iOS Safari:**
-Visit site → Share → "Add to Home Screen"
 
 ## About
 
