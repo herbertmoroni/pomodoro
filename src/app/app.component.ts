@@ -252,6 +252,74 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Check if timer is active (running or paused)
+  get isTimerActive(): boolean {
+    return this.isRunning || this.currentTime !== (this.isFocusTime ? this.focusTime : this.breakTime);
+  }
+
+  // Store original time when editing starts
+  private originalDisplayTime: string = '';
+  private isEditingTime: boolean = false;
+
+  // Handle click on time input
+  onTimeClick() {
+    if (!this.isTimerActive) {
+      this.originalDisplayTime = this.displayTime;
+      this.isEditingTime = true;
+    }
+  }
+
+  // Handle blur/enter on time input - parse and update timer
+  onTimeBlur() {
+    if (!this.isEditingTime) return;
+    
+    this.isEditingTime = false;
+    
+    let minutes = 0;
+    let seconds = 0;
+    
+    // Trim whitespace
+    const input = this.displayTime.trim();
+    
+    // Check if it's just a number (shorthand for minutes)
+    const shorthandMatch = input.match(/^\d{1,3}$/);
+    if (shorthandMatch) {
+      minutes = parseInt(input, 10);
+      seconds = 0;
+    } else {
+      // Parse the full format MM:SS or MMM:SS
+      const fullMatch = input.match(/^(\d{1,3}):([0-5]\d)$/);
+      
+      if (!fullMatch) {
+        // Invalid format, restore original
+        this.displayTime = this.originalDisplayTime;
+        return;
+      }
+      
+      minutes = parseInt(fullMatch[1], 10);
+      seconds = parseInt(fullMatch[2], 10);
+    }
+    
+    // Validate ranges (1-120 minutes)
+    if (minutes < 1 || minutes > 120 || seconds > 59) {
+      this.displayTime = this.originalDisplayTime;
+      return;
+    }
+    
+    const totalSeconds = minutes * 60 + seconds;
+    
+    // Update the appropriate timer
+    if (this.isFocusTime) {
+      this.focusTime = totalSeconds;
+      this.currentTime = totalSeconds;
+    } else {
+      this.breakTime = totalSeconds;
+      this.currentTime = totalSeconds;
+    }
+    
+    this.updateDisplay();
+  }
+
   ngOnDestroy() {
     this.stopTimer();
     this.titleService.setTitle(this.originalTitle);
