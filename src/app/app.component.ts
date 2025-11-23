@@ -322,7 +322,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Always format to MM:SS on blur
     this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    
+
     // Update progress bar
     if (this.isFocusTime) {
       this.progress = 100 - (this.currentTime / this.getTotalTime()) * 100;
