@@ -13,6 +13,19 @@ mat-toolbar {
   gap: 12px;
 }
 
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.logo-link:hover {
+  opacity: 0.9;
+}
+
 .app-logo {
   width: 32px;
   height: 32px;
@@ -22,6 +35,11 @@ mat-toolbar {
 .toolbar-title {
   font-size: 20px;
   font-weight: 500;
+}
+
+.active-route {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 .spacer {

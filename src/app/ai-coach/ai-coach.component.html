@@ -1,0 +1,68 @@
+<div class="coach-container">
+  <div class="messages-container">
+    <div class="messages-wrapper">
+      @for (message of messages; track message.timestamp) {
+        <div class="message" [class.user-message]="message.role === 'user'" [class.ai-message]="message.role === 'assistant'">
+          <mat-card class="message-card">
+            <mat-card-content>
+              <div class="message-header">
+                <mat-icon class="message-icon">
+                  {{ message.role === 'user' ? 'person' : 'support_agent' }}
+                </mat-icon>
+                <span class="message-role">
+                  {{ message.role === 'user' ? 'You' : 'AI Coach' }}
+                </span>
+              </div>
+              <div class="message-content">{{ message.content }}</div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+
+      @if (isLoading) {
+        <div class="message ai-message">
+          <mat-card class="message-card loading-card">
+            <mat-card-content>
+              <div class="message-header">
+                <mat-icon class="message-icon">support_agent</mat-icon>
+                <span class="message-role">AI Coach</span>
+              </div>
+              <div class="loading-indicator">
+                <mat-progress-spinner
+                  mode="indeterminate"
+                  diameter="24"
+                  color="primary"
+                ></mat-progress-spinner>
+                <span class="loading-text">Analyzing your data...</span>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="input-container">
+    <mat-form-field appearance="outline" class="input-field">
+      <mat-label>Ask your AI Coach anything...</mat-label>
+      <textarea
+        matInput
+        [(ngModel)]="userInput"
+        (keydown)="onEnter($event)"
+        [disabled]="isLoading"
+        rows="1"
+        placeholder="E.g., How was my week? When am I most productive?"
+      ></textarea>
+    </mat-form-field>
+    <button
+      mat-fab
+      color="primary"
+      (click)="sendMessage()"
+      [disabled]="!userInput.trim() || isLoading"
+      aria-label="Send message"
+      class="send-button"
+    >
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+</div>
