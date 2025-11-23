@@ -1,4 +1,4 @@
-npm # Security Policy
+# Security Policy
 
 ## Dependency Scanning
 
@@ -132,14 +132,12 @@ The application respects browser security policies:
 When deploying, ensure these security headers are configured:
 
 ```
-Content-Security-Policy: [See CSP-CONFIG.md]
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms; ...
 X-Frame-Options: DENY
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: geolocation=(), microphone=(), camera=()
 ```
-
-See `CSP-CONFIG.md` for detailed CSP configuration.
 
 ## License Compliance
 
@@ -159,4 +157,4 @@ Security audits are performed:
 
 ---
 
-Last updated: 2025-11-18
+Last updated: 2025-11-22

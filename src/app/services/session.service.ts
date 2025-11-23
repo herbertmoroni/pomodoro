@@ -71,6 +71,5 @@ export class SessionService {
     if (!user) {
       return;
     }
-
   }
 }
