@@ -11,6 +11,7 @@ I built this as both a personal productivity tool and a learning laboratory whil
 
 **Current Status:**
 - ✅ Core Pomodoro timer functionality
+- ✅ **Flexible timer duration** (click to edit, supports shorthand like "5" → "5:00")
 - ✅ Category/tag system for organizing sessions
 - ✅ Session tracking with comprehensive metadata
 - ✅ Progressive Web App (works offline, installs on devices)
