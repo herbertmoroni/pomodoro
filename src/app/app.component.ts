@@ -16,7 +16,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { FirebaseService } from './services/firebase.service';
 import { SessionService } from './services/session.service';
-import { CategoryService, Category as FirestoreCategory } from './services/category.service';
+import { CategoryService } from './services/category.service';
 import { LoggerService } from './services/logger.service';
 import { ManageCategoriesComponent } from './manage-categories/manage-categories.component';
 import {
