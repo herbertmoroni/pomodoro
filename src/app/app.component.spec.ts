@@ -35,8 +35,8 @@ describe('AppComponent', () => {
 
     it('should render timer display', () => {
       const compiled = fixture.nativeElement as HTMLElement;
-      const timerDisplay = compiled.querySelector('.timer-display');
-      expect(timerDisplay?.textContent).toContain('25:00');
+      const timerInput = compiled.querySelector('.time-input') as HTMLInputElement;
+      expect(timerInput?.value).toBe('25:00');
     });
 
     it('should render mode label', () => {

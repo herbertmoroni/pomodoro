@@ -261,21 +261,18 @@ export class AppComponent implements OnInit, OnDestroy {
 
   // Store original time when editing starts
   private originalDisplayTime: string = '';
-  private isEditingTime: boolean = false;
 
-  // Handle click on time input
-  onTimeClick() {
+  // Handle click on time input - select all for easy editing
+  onTimeClick(inputElement: HTMLInputElement) {
     if (!this.isTimerActive) {
       this.originalDisplayTime = this.displayTime;
-      this.isEditingTime = true;
+      setTimeout(() => inputElement.select(), 0);
     }
   }
 
   // Handle blur/enter on time input - parse and update timer
   onTimeBlur() {
-    if (!this.isEditingTime) return;
-
-    this.isEditingTime = false;
+    if (this.isTimerActive) return;
 
     let minutes = 0;
     let seconds = 0;
@@ -283,27 +280,31 @@ export class AppComponent implements OnInit, OnDestroy {
     // Trim whitespace
     const input = this.displayTime.trim();
 
-    // Check if it's just a number (shorthand for minutes)
-    const shorthandMatch = input.match(/^\d{1,3}$/);
-    if (shorthandMatch) {
+    // Handle empty input - restore original
+    if (!input) {
+      this.displayTime = this.originalDisplayTime;
+      return;
+    }
+
+    // Try to parse as just a number (shorthand for minutes)
+    if (/^\d{1,3}$/.test(input)) {
       minutes = parseInt(input, 10);
       seconds = 0;
-    } else {
-      // Parse the full format MM:SS or MMM:SS
-      const fullMatch = input.match(/^(\d{1,3}):([0-5]\d)$/);
-
-      if (!fullMatch) {
-        // Invalid format, restore original
-        this.displayTime = this.originalDisplayTime;
-        return;
-      }
-
-      minutes = parseInt(fullMatch[1], 10);
-      seconds = parseInt(fullMatch[2], 10);
+    }
+    // Try to parse as MM:SS format
+    else if (/^(\d{1,3}):([0-5]\d)$/.test(input)) {
+      const match = input.match(/^(\d{1,3}):([0-5]\d)$/);
+      minutes = parseInt(match![1], 10);
+      seconds = parseInt(match![2], 10);
+    }
+    // Invalid format - restore original
+    else {
+      this.displayTime = this.originalDisplayTime;
+      return;
     }
 
     // Validate ranges (1-120 minutes)
-    if (minutes < 1 || minutes > 120 || seconds > 59) {
+    if (minutes < 1 || minutes > 120) {
       this.displayTime = this.originalDisplayTime;
       return;
     }
@@ -319,7 +320,21 @@ export class AppComponent implements OnInit, OnDestroy {
       this.currentTime = totalSeconds;
     }
 
-    this.updateDisplay();
+    // Always format to MM:SS on blur
+    this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Update progress bar
+    if (this.isFocusTime) {
+      this.progress = 100 - (this.currentTime / this.getTotalTime()) * 100;
+    } else {
+      this.progress = (this.currentTime / this.getTotalTime()) * 100;
+    }
+  }
+
+  // Handle Enter key - blur the input to trigger onTimeBlur
+  onTimeEnter() {
+    // Just process the time directly
+    this.onTimeBlur();
   }
 
   ngOnDestroy() {
