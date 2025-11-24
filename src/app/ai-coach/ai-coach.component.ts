@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -26,6 +27,7 @@ interface ChatMessage {
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    TextFieldModule,
   ],
   templateUrl: './ai-coach.component.html',
   styleUrl: './ai-coach.component.css',
