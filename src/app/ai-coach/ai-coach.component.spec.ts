@@ -31,8 +31,8 @@ describe('AiCoachComponent', () => {
   it('should add user message when sending', async () => {
     component.userInput = 'How was my week?';
     await component.sendMessage();
-    
-    const userMessages = component.messages.filter(m => m.role === 'user');
+
+    const userMessages = component.messages.filter((m) => m.role === 'user');
     expect(userMessages.length).toBeGreaterThan(0);
     expect(userMessages[0].content).toBe('How was my week?');
   });
@@ -40,7 +40,7 @@ describe('AiCoachComponent', () => {
   it('should clear input after sending message', async () => {
     component.userInput = 'Test question';
     await component.sendMessage();
-    
+
     expect(component.userInput).toBe('');
   });
 
@@ -48,7 +48,7 @@ describe('AiCoachComponent', () => {
     component.userInput = '   ';
     const initialLength = component.messages.length;
     await component.sendMessage();
-    
+
     expect(component.messages.length).toBe(initialLength);
   });
 });
