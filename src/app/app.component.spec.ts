@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 import { Title } from '@angular/platform-browser';
 import { ComponentFixture } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -10,7 +11,7 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [Title],
+      providers: [Title, provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
