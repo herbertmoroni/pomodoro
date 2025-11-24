@@ -14,6 +14,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { FirebaseService } from './services/firebase.service';
 import { SessionService } from './services/session.service';
 import { CategoryService } from './services/category.service';
@@ -63,6 +64,9 @@ interface PomodoroSession {
     MatToolbarModule,
     MatSnackBarModule,
     MatDividerModule,
+    RouterLink,
+    RouterOutlet,
+    RouterLinkActive,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
