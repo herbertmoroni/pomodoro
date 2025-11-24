@@ -2,7 +2,11 @@
   <div class="messages-container">
     <div class="messages-wrapper">
       @for (message of messages; track message.timestamp) {
-        <div class="message" [class.user-message]="message.role === 'user'" [class.ai-message]="message.role === 'assistant'">
+        <div
+          class="message"
+          [class.user-message]="message.role === 'user'"
+          [class.ai-message]="message.role === 'assistant'"
+        >
           <mat-card class="message-card">
             <mat-card-content>
               <div class="message-header">

@@ -80,8 +80,7 @@ export class AiCoachComponent {
       console.error('Error sending message:', error);
       this.messages.push({
         role: 'assistant',
-        content:
-          "Sorry, I encountered an error. Please try again or check your connection.",
+        content: 'Sorry, I encountered an error. Please try again or check your connection.',
         timestamp: new Date(),
       });
     } finally {

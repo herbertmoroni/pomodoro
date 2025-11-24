@@ -6,7 +6,12 @@
   <span class="spacer"></span>
 
   @if (currentUser) {
-    <button mat-button routerLink="/" routerLinkActive="active-route" [routerLinkActiveOptions]="{exact: true}">
+    <button
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-route"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
       <mat-icon>timer</mat-icon>
       Timer
     </button>
