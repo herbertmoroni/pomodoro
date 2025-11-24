@@ -47,10 +47,12 @@
       <mat-label>Ask your AI Coach anything...</mat-label>
       <textarea
         matInput
+        cdkTextareaAutosize
+        cdkAutosizeMinRows="2"
+        cdkAutosizeMaxRows="8"
         [(ngModel)]="userInput"
         (keydown)="onEnter($event)"
         [disabled]="isLoading"
-        rows="1"
         placeholder="E.g., How was my week? When am I most productive?"
       ></textarea>
     </mat-form-field>
