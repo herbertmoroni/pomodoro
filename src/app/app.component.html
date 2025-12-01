@@ -1,7 +1,25 @@
 <mat-toolbar color="primary">
-  <img src="icons/icon-72x72.png" alt="FocusGo" class="app-logo" />
-  <span class="toolbar-title">FocusGo</span>
+  <a routerLink="/" class="logo-link">
+    <img src="icons/icon-72x72.png" alt="FocusGo" class="app-logo" />
+    <span class="toolbar-title">FocusGo</span>
+  </a>
   <span class="spacer"></span>
+
+  @if (currentUser) {
+    <button
+      mat-button
+      routerLink="/"
+      routerLinkActive="active-route"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon>timer</mat-icon>
+      Timer
+    </button>
+    <button mat-button routerLink="/coach" routerLinkActive="active-route">
+      <mat-icon>support_agent</mat-icon>
+      AI Coach
+    </button>
+  }
 
   @if (!currentUser) {
     <button mat-button class="sign-in-button" (click)="signIn()">
@@ -21,6 +39,8 @@
     </mat-menu>
   }
 </mat-toolbar>
+
+<router-outlet></router-outlet>
 
 <div class="app-container">
   <div class="timer-container">
