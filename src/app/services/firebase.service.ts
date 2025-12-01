@@ -3,6 +3,8 @@ import { initializeApp } from 'firebase/app';
 import {
   getAuth,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   signOut,
   onAuthStateChanged,
@@ -28,6 +30,11 @@ export class FirebaseService {
     this.auth = getAuth(this.app);
     this.db = getFirestore(this.app);
 
+    // Check for redirect result on app load (for mobile sign-in)
+    getRedirectResult(this.auth).catch((error) => {
+      console.error('Redirect sign-in error:', error);
+    });
+
     // Listen to auth state changes
     onAuthStateChanged(this.auth, (user) => {
       this.userSubject.next(user);
@@ -45,10 +52,24 @@ export class FirebaseService {
   }
 
   // Sign in with Google
-  async signInWithGoogle(): Promise<User> {
+  async signInWithGoogle(): Promise<User | null> {
     const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(this.auth, provider);
-    return result.user;
+    
+    // Detect if device is mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    ) || (window.innerWidth <= 768);
+    
+    if (isMobile) {
+      // Use redirect for mobile devices (popups often blocked)
+      await signInWithRedirect(this.auth, provider);
+      // For redirect, user will be available after page reload via onAuthStateChanged
+      return null;
+    } else {
+      // Use popup for desktop devices
+      const result = await signInWithPopup(this.auth, provider);
+      return result.user;
+    }
   }
 
   // Sign out
