@@ -54,12 +54,12 @@ export class FirebaseService {
   // Sign in with Google
   async signInWithGoogle(): Promise<User | null> {
     const provider = new GoogleAuthProvider();
-    
+
     // Detect if device is mobile
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-      navigator.userAgent
-    ) || (window.innerWidth <= 768);
-    
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      window.innerWidth <= 768;
+
     if (isMobile) {
       // Use redirect for mobile devices (popups often blocked)
       await signInWithRedirect(this.auth, provider);
