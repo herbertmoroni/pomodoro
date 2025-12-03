@@ -11,7 +11,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { AiChatService, ChatMessage as AiChatMessage } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
 import { FirebaseService } from '../services/firebase.service';
-import { SessionService, PomodoroSession } from '../services/session.service';
+import { SessionService } from '../services/session.service';
 import { ChatService } from '../services/chat.service';
 import { User } from 'firebase/auth';
 
@@ -55,23 +55,27 @@ export class AiCoachComponent implements OnInit {
   async ngOnInit() {
     this.firebaseService.user$.subscribe(async (user) => {
       this.currentUser = user;
-      
+
       if (!user) {
         // Not signed in - show welcome message
-        this.messages = [{
-          role: 'assistant',
-          content:
-            "👋 Welcome! To use the AI Coach, please sign in first. Click the 'Sign in' button in the top toolbar.",
-          timestamp: new Date(),
-        }];
+        this.messages = [
+          {
+            role: 'assistant',
+            content:
+              "👋 Welcome! To use the AI Coach, please sign in first. Click the 'Sign in' button in the top toolbar.",
+            timestamp: new Date(),
+          },
+        ];
       } else if (!this.aiChatService.isAvailable()) {
         // AI not configured
-        this.messages = [{
-          role: 'assistant',
-          content:
-            "⚠️ AI features are not configured. To enable the AI Coach, please add your GitHub Personal Access Token to environment.local.ts. See the README for setup instructions.",
-          timestamp: new Date(),
-        }];
+        this.messages = [
+          {
+            role: 'assistant',
+            content:
+              '⚠️ AI features are not configured. To enable the AI Coach, please add your GitHub Personal Access Token to environment.local.ts. See the README for setup instructions.',
+            timestamp: new Date(),
+          },
+        ];
       } else {
         // User signed in and AI available - load chat history
         await this.loadChatHistory();
@@ -82,7 +86,7 @@ export class AiCoachComponent implements OnInit {
   private async loadChatHistory() {
     // Try to load existing chat
     let chatIdToLoad = this.chatService.getCurrentChatId();
-    
+
     if (!chatIdToLoad) {
       // No current chat, try to load most recent
       const recentChats = await this.chatService.getRecentChats(1);
@@ -97,20 +101,21 @@ export class AiCoachComponent implements OnInit {
       const previousMessages = await this.chatService.loadChatHistory(chatIdToLoad);
       if (previousMessages.length > 0) {
         this.messages = previousMessages;
-        this.logger.log('Loaded existing chat with', previousMessages.length, 'messages');
         return;
       }
     }
 
     // No existing chat found, start new chat with welcome message
     this.chatService.generateChatId();
-    this.messages = [{
-      role: 'assistant',
-      content:
-        "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
-      timestamp: new Date(),
-    }];
-    
+    this.messages = [
+      {
+        role: 'assistant',
+        content:
+          "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
+        timestamp: new Date(),
+      },
+    ];
+
     // Save welcome message
     const chatId = this.chatService.getCurrentChatId();
     if (chatId) {
@@ -149,7 +154,11 @@ export class AiCoachComponent implements OnInit {
       const sessionData = await this.getSessionContext();
 
       // Call AI service with session context
-      const response = await this.aiChatService.sendMessage(question, conversationHistory, sessionData);
+      const response = await this.aiChatService.sendMessage(
+        question,
+        conversationHistory,
+        sessionData
+      );
 
       const aiResponse: ChatMessage = {
         role: 'assistant',
@@ -204,9 +213,7 @@ export class AiCoachComponent implements OnInit {
       // Get last 30 days of data
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const recentSessions = sessions.filter(
-        (s) => new Date(s.startTime) >= thirtyDaysAgo
-      );
+      const recentSessions = sessions.filter((s) => new Date(s.startTime) >= thirtyDaysAgo);
 
       // Calculate statistics
       const totalSessions = recentSessions.length;
@@ -241,7 +248,8 @@ export class AiCoachComponent implements OnInit {
         summary: {
           totalSessions,
           completedSessions,
-          completionRate: totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0,
+          completionRate:
+            totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0,
           totalFocusMinutes: Math.round(totalFocusTime / 60),
           avgSessionMinutes: Math.round(avgDuration / 60),
         },
