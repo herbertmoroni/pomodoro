@@ -1,6 +1,15 @@
 // Development environment configuration
 // For local development: Copy environment.example.ts to environment.local.ts and add your GitHub PAT
-import { localConfig } from './environment.local';
+
+// Try to import local config, fallback to CI stub if not found
+let localConfig: { github?: { pat?: string } };
+try {
+  // @ts-ignore - Dynamic import for optional file
+  localConfig = require('./environment.local').localConfig;
+} catch {
+  // Fallback to CI stub when environment.local.ts doesn't exist
+  localConfig = require('./environment.local.ci').localConfig;
+}
 
 export const environment = {
   production: false,
