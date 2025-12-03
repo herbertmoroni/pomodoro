@@ -55,6 +55,44 @@ Currently evaluating different approaches for adding AI-powered time analysis:
 
 The app tracks detailed session data (duration, completion, timing patterns, breaks) designed for future AI analysis to provide personalized productivity insights and recommendations.
 
+## Setup & Configuration
+
+### Local Development Setup
+
+The app uses a safe configuration pattern that prevents accidentally committing secrets:
+
+1. **Copy the example file to create your local secrets:**
+   ```bash
+   cp src/environments/environment.example.ts src/environments/environment.local.ts
+   ```
+
+2. **Get your GitHub Personal Access Token:**
+   - Go to https://github.com/settings/tokens
+   - Click "Generate new token (classic)"
+   - No special scopes needed for GitHub Models
+   - Copy the token (starts with `github_pat_`)
+
+3. **Add your PAT to the local file:**
+   - Edit `environment.local.ts` and replace `github_pat_YOUR_TOKEN_HERE` with your actual token
+   - This file is gitignored and will **never be committed**
+
+**Safety layers:**
+- ✅ Main environment files (`environment.ts`, `environment.prod.ts`) can be safely committed
+- ✅ Your secret PAT is in `environment.local.ts` which is gitignored
+- ✅ App works without PAT (AI features will be disabled)
+- ✅ Impossible to accidentally commit your PAT
+
+### Production Deployment (AWS Amplify)
+
+For production, set the GitHub PAT as an environment variable in AWS Amplify:
+
+1. Go to AWS Amplify Console → Your App
+2. Navigate to **App Settings** → **Environment variables**
+3. Add variable: `GITHUB_PAT` = `your_token_here`
+4. Redeploy the app
+
+(Environment variable injection for Angular apps in Amplify will be implemented when AI features are ready for production)
+
 ## SEO & Growth Roadmap
 
 ### Short Term (Easy Wins)

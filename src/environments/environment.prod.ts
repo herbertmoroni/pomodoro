@@ -1,4 +1,7 @@
 // Production environment configuration
+// For production: Set GITHUB_PAT as environment variable in AWS Amplify Console
+// AWS Amplify -> App Settings -> Environment variables -> Add: GITHUB_PAT=your_token
+
 export const environment = {
   production: true,
   firebase: {
@@ -9,5 +12,12 @@ export const environment = {
     messagingSenderId: '844992821880',
     appId: '1:844992821880:web:13c9ae7e31f74ccf52cb8d',
     measurementId: 'G-0842SCQMVE',
+  },
+  github: {
+    // In production, this should be injected via AWS Amplify environment variables
+    // For now, AI features will be disabled in production until configured
+    pat: '',
+    modelsApiUrl: 'https://models.inference.ai.azure.com',
+    modelName: 'gpt-4o',
   },
 };
