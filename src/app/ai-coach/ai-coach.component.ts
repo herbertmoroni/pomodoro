@@ -12,6 +12,7 @@ import { AiChatService, ChatMessage as AiChatMessage } from '../services/ai-chat
 import { LoggerService } from '../services/logger.service';
 import { FirebaseService } from '../services/firebase.service';
 import { SessionService, PomodoroSession } from '../services/session.service';
+import { ChatService } from '../services/chat.service';
 import { User } from 'firebase/auth';
 
 interface ChatMessage {
@@ -47,39 +48,74 @@ export class AiCoachComponent implements OnInit {
     private aiChatService: AiChatService,
     private logger: LoggerService,
     private firebaseService: FirebaseService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private chatService: ChatService
   ) {}
 
-  ngOnInit() {
-    this.firebaseService.user$.subscribe((user) => {
+  async ngOnInit() {
+    this.firebaseService.user$.subscribe(async (user) => {
       this.currentUser = user;
       
-      // Clear messages and show appropriate welcome
-      this.messages = [];
-      
       if (!user) {
-        this.messages.push({
+        // Not signed in - show welcome message
+        this.messages = [{
           role: 'assistant',
           content:
             "👋 Welcome! To use the AI Coach, please sign in first. Click the 'Sign in' button in the top toolbar.",
           timestamp: new Date(),
-        });
+        }];
       } else if (!this.aiChatService.isAvailable()) {
-        this.messages.push({
+        // AI not configured
+        this.messages = [{
           role: 'assistant',
           content:
             "⚠️ AI features are not configured. To enable the AI Coach, please add your GitHub Personal Access Token to environment.local.ts. See the README for setup instructions.",
           timestamp: new Date(),
-        });
+        }];
       } else {
-        this.messages.push({
-          role: 'assistant',
-          content:
-            "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
-          timestamp: new Date(),
-        });
+        // User signed in and AI available - load chat history
+        await this.loadChatHistory();
       }
     });
+  }
+
+  private async loadChatHistory() {
+    // Try to load existing chat
+    let chatIdToLoad = this.chatService.getCurrentChatId();
+    
+    if (!chatIdToLoad) {
+      // No current chat, try to load most recent
+      const recentChats = await this.chatService.getRecentChats(1);
+      if (recentChats.length > 0) {
+        chatIdToLoad = recentChats[0];
+        this.chatService.setCurrentChatId(chatIdToLoad);
+      }
+    }
+
+    if (chatIdToLoad) {
+      // Load messages from Firestore
+      const previousMessages = await this.chatService.loadChatHistory(chatIdToLoad);
+      if (previousMessages.length > 0) {
+        this.messages = previousMessages;
+        this.logger.log('Loaded existing chat with', previousMessages.length, 'messages');
+        return;
+      }
+    }
+
+    // No existing chat found, start new chat with welcome message
+    this.chatService.generateChatId();
+    this.messages = [{
+      role: 'assistant',
+      content:
+        "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
+      timestamp: new Date(),
+    }];
+    
+    // Save welcome message
+    const chatId = this.chatService.getCurrentChatId();
+    if (chatId) {
+      await this.chatService.saveMessage(chatId, this.messages[0]);
+    }
   }
 
   async sendMessage(): Promise<void> {
@@ -121,6 +157,13 @@ export class AiCoachComponent implements OnInit {
         timestamp: new Date(),
       };
       this.messages.push(aiResponse);
+
+      // Save both messages to Firestore
+      const chatId = this.chatService.getCurrentChatId();
+      if (chatId) {
+        await this.chatService.saveMessage(chatId, userMessage);
+        await this.chatService.saveMessage(chatId, aiResponse);
+      }
 
       if (response.error) {
         this.logger.warn('AI service returned error:', response.error);
