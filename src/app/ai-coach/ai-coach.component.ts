@@ -8,6 +8,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TextFieldModule } from '@angular/cdk/text-field';
+import { AiChatService, ChatMessage as AiChatMessage } from '../services/ai-chat.service';
+import { LoggerService } from '../services/logger.service';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -37,14 +39,24 @@ export class AiCoachComponent {
   userInput = '';
   isLoading = false;
 
-  constructor() {
-    // Welcome message
-    this.messages.push({
-      role: 'assistant',
-      content:
-        "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How was my week?' or 'When am I most productive?'",
-      timestamp: new Date(),
-    });
+  constructor(private aiChatService: AiChatService, private logger: LoggerService) {
+    // Check if AI is available
+    if (!this.aiChatService.isAvailable()) {
+      this.messages.push({
+        role: 'assistant',
+        content:
+          "⚠️ AI features are not configured. To enable the AI Coach, please add your GitHub Personal Access Token to environment.local.ts. See the README for setup instructions.",
+        timestamp: new Date(),
+      });
+    } else {
+      // Welcome message
+      this.messages.push({
+        role: 'assistant',
+        content:
+          "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
+        timestamp: new Date(),
+      });
+    }
   }
 
   async sendMessage(): Promise<void> {
@@ -66,21 +78,32 @@ export class AiCoachComponent {
     this.isLoading = true;
 
     try {
-      // TODO: Call AI service here
-      // For now, mock response
-      await this.delay(1500);
+      // Convert message history to AI service format
+      const conversationHistory: AiChatMessage[] = this.messages
+        .slice(1, -1) // Skip welcome message and current user message
+        .map((msg) => ({
+          role: msg.role === 'user' ? 'user' : 'assistant',
+          content: msg.content,
+        }));
+
+      // Call AI service
+      const response = await this.aiChatService.sendMessage(question, conversationHistory);
 
       const aiResponse: ChatMessage = {
         role: 'assistant',
-        content: `You asked: "${question}"\n\nI'll analyze your productivity data and provide insights here. (AI service integration coming soon!)`,
+        content: response.message,
         timestamp: new Date(),
       };
       this.messages.push(aiResponse);
+
+      if (response.error) {
+        this.logger.warn('AI service returned error:', response.error);
+      }
     } catch (error) {
-      console.error('Error sending message:', error);
+      this.logger.error('Error sending message to AI:', error);
       this.messages.push({
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again or check your connection.',
+        content: 'Sorry, I encountered an unexpected error. Please try again.',
         timestamp: new Date(),
       });
     } finally {
@@ -93,9 +116,5 @@ export class AiCoachComponent {
       event.preventDefault();
       this.sendMessage();
     }
-  }
-
-  private delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
