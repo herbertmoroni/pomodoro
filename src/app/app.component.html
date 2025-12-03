@@ -1,5 +1,11 @@
 <mat-toolbar color="primary">
-  <a routerLink="/" class="logo-link">
+  <a 
+    routerLink="/" 
+    class="logo-link"
+    [class.disabled]="isTimerRunning"
+    [matTooltip]="isTimerRunning ? 'Pause timer to navigate home' : ''"
+    (click)="isTimerRunning && $event.preventDefault()"
+  >
     <img src="icons/icon-72x72.png" alt="FocusGo" class="app-logo" />
     <span class="toolbar-title">FocusGo</span>
   </a>
@@ -14,7 +20,13 @@
     <mat-icon>timer</mat-icon>
     Timer
   </button>
-  <button mat-button routerLink="/coach" routerLinkActive="active-route">
+  <button 
+    mat-button 
+    routerLink="/coach" 
+    routerLinkActive="active-route"
+    [disabled]="isTimerRunning"
+    [matTooltip]="isTimerRunning ? 'Pause timer to access AI Coach' : ''"
+  >
     <mat-icon>support_agent</mat-icon>
     AI Coach
   </button>
@@ -25,7 +37,12 @@
       Sign in
     </button>
   } @else {
-    <button mat-button [matMenuTriggerFor]="userMenu">
+    <button 
+      mat-button 
+      [matMenuTriggerFor]="userMenu"
+      [disabled]="isTimerRunning"
+      [matTooltip]="isTimerRunning ? 'Pause timer to sign out' : ''"
+    >
       <mat-icon>account_circle</mat-icon>
       {{ currentUser.displayName || currentUser.email }}
     </button>
