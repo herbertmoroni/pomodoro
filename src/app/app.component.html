@@ -1,6 +1,6 @@
 <mat-toolbar color="primary">
-  <a 
-    routerLink="/" 
+  <a
+    routerLink="/"
     class="logo-link"
     [class.disabled]="isTimerRunning"
     [matTooltip]="isTimerRunning ? 'Pause timer to navigate home' : ''"
@@ -20,9 +20,9 @@
     <mat-icon>timer</mat-icon>
     Timer
   </button>
-  <button 
-    mat-button 
-    routerLink="/coach" 
+  <button
+    mat-button
+    routerLink="/coach"
     routerLinkActive="active-route"
     [disabled]="isTimerRunning"
     [matTooltip]="isTimerRunning ? 'Pause timer to access AI Coach' : ''"
@@ -37,8 +37,8 @@
       Sign in
     </button>
   } @else {
-    <button 
-      mat-button 
+    <button
+      mat-button
       [matMenuTriggerFor]="userMenu"
       [disabled]="isTimerRunning"
       [matTooltip]="isTimerRunning ? 'Pause timer to sign out' : ''"

@@ -55,16 +55,16 @@ export class TimerStateService {
         currentTime: state.currentTime,
         isFocusTime: state.isFocusTime,
         selectedCategoryId: state.selectedCategoryId,
-        sessionStartTime: state.sessionStartTime ? Timestamp.fromDate(state.sessionStartTime) : null,
+        sessionStartTime: state.sessionStartTime
+          ? Timestamp.fromDate(state.sessionStartTime)
+          : null,
         consecutiveSessionCount: state.consecutiveSessionCount,
         lastSessionWasBreak: state.lastSessionWasBreak,
         lastUpdated: Timestamp.now(),
       });
-
-      this.logger.log('Timer state saved to Firestore');
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Silently fail if permissions not set up yet
-      if (error?.code === 'permission-denied') {
+      if ((error as { code?: string })?.code === 'permission-denied') {
         this.logger.warn('Timer state not saved: Firestore permissions not configured');
       } else {
         this.logger.error('Failed to save timer state:', error);
@@ -95,14 +95,13 @@ export class TimerStateService {
         };
 
         this.stateSubject.next(state);
-        this.logger.log('Timer state loaded from Firestore');
         return state;
       }
 
       return null;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Silently fail if permissions not set up yet
-      if (error?.code === 'permission-denied') {
+      if ((error as { code?: string })?.code === 'permission-denied') {
         this.logger.warn('Timer state not loaded: Firestore permissions not configured');
       } else {
         this.logger.error('Failed to load timer state:', error);
@@ -121,14 +120,13 @@ export class TimerStateService {
       const db = this.firebaseService.getFirestore();
       const stateRef = doc(db, `users/${user.uid}/timerState/current`);
       await deleteDoc(stateRef);
-      
+
       this.clearState();
-      this.logger.log('Timer state cleared from Firestore');
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Silently fail if permissions not set up yet or document doesn't exist
-      if (error?.code === 'permission-denied') {
+      if ((error as { code?: string })?.code === 'permission-denied') {
         this.logger.warn('Timer state not cleared: Firestore permissions not configured');
-      } else if (error?.code !== 'not-found') {
+      } else if ((error as { code?: string })?.code !== 'not-found') {
         this.logger.error('Failed to clear timer state:', error);
       }
     }

@@ -593,13 +593,13 @@ export class TimerComponent implements OnInit, OnDestroy {
       this.sessionStartTime = savedState.sessionStartTime;
       this.consecutiveSessionCount = savedState.consecutiveSessionCount;
       this.lastSessionWasBreak = savedState.lastSessionWasBreak;
-      
+
       // Restore selected category after categories are loaded
       const category = this.categories.find((c) => c.id === savedState.selectedCategoryId);
       if (category) {
         this.selectedCategory = category;
       }
-      
+
       this.updateDisplay();
     }
   }

@@ -30,14 +30,15 @@ export class AiChatService {
     if (!this.apiToken) {
       this.logger.warn('GitHub PAT not configured. AI features are disabled.');
       return {
-        message: 'AI features are not configured. Please add your GitHub PAT to environment.local.ts',
+        message:
+          'AI features are not configured. Please add your GitHub PAT to environment.local.ts',
         error: 'NO_API_TOKEN',
       };
     }
 
     try {
       const systemPrompt = this.getSystemPrompt(sessionData);
-      
+
       const messages: ChatMessage[] = [
         { role: 'system', content: systemPrompt },
         ...conversationHistory,
@@ -64,14 +65,14 @@ export class AiChatService {
       if (!response.ok) {
         const errorText = await response.text();
         this.logger.error('AI API error:', response.status, errorText);
-        
+
         if (response.status === 401) {
           return {
             message: 'Invalid GitHub token. Please check your environment.local.ts configuration.',
             error: 'INVALID_TOKEN',
           };
         }
-        
+
         return {
           message: `AI service error: ${response.status}. Please try again.`,
           error: 'API_ERROR',

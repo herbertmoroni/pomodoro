@@ -1,7 +1,17 @@
 import { Injectable } from '@angular/core';
 import { FirebaseService } from './firebase.service';
 import { LoggerService } from './logger.service';
-import { collection, addDoc, query, orderBy, getDocs, doc, setDoc, Timestamp, limit } from 'firebase/firestore';
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  getDocs,
+  doc,
+  setDoc,
+  Timestamp,
+  limit,
+} from 'firebase/firestore';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
@@ -10,7 +20,7 @@ export interface ChatMessage {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
   private currentChatId: string | null = null;
@@ -43,7 +53,7 @@ export class ChatService {
     try {
       const db = this.firebaseService.getFirestore();
       const messagesRef = collection(db, `users/${user.uid}/chats/${chatId}/messages`);
-      
+
       await addDoc(messagesRef, {
         role: message.role,
         content: message.content,
@@ -52,14 +62,16 @@ export class ChatService {
 
       // Update chat metadata
       const chatDocRef = doc(db, `users/${user.uid}/chats`, chatId);
-      await setDoc(chatDocRef, {
-        lastMessageTime: Timestamp.fromDate(message.timestamp),
-        lastMessagePreview: message.content.substring(0, 100),
-      }, { merge: true });
-
-      this.logger.log('Message saved to chat:', chatId);
-    } catch (error: any) {
-      if (error?.code === 'permission-denied') {
+      await setDoc(
+        chatDocRef,
+        {
+          lastMessageTime: Timestamp.fromDate(message.timestamp),
+          lastMessagePreview: message.content.substring(0, 100),
+        },
+        { merge: true }
+      );
+    } catch (error: unknown) {
+      if ((error as { code?: string })?.code === 'permission-denied') {
         this.logger.warn('Chat message not saved: Firestore permissions not configured');
       } else {
         this.logger.error('Failed to save message:', error);
@@ -77,10 +89,10 @@ export class ChatService {
       const db = this.firebaseService.getFirestore();
       const messagesRef = collection(db, `users/${user.uid}/chats/${chatId}/messages`);
       const q = query(messagesRef, orderBy('timestamp', 'asc'));
-      
+
       const querySnapshot = await getDocs(q);
       const messages: ChatMessage[] = [];
-      
+
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         messages.push({
@@ -90,10 +102,9 @@ export class ChatService {
         });
       });
 
-      this.logger.log('Loaded chat history:', messages.length, 'messages');
       return messages;
-    } catch (error: any) {
-      if (error?.code === 'permission-denied') {
+    } catch (error: unknown) {
+      if ((error as { code?: string })?.code === 'permission-denied') {
         this.logger.warn('Chat history not loaded: Firestore permissions not configured');
       } else {
         this.logger.error('Failed to load chat history:', error);
@@ -112,17 +123,17 @@ export class ChatService {
       const db = this.firebaseService.getFirestore();
       const chatsRef = collection(db, `users/${user.uid}/chats`);
       const q = query(chatsRef, orderBy('lastMessageTime', 'desc'), limit(limitCount));
-      
+
       const querySnapshot = await getDocs(q);
       const chatIds: string[] = [];
-      
+
       querySnapshot.forEach((doc) => {
         chatIds.push(doc.id);
       });
 
       return chatIds;
-    } catch (error: any) {
-      if (error?.code === 'permission-denied') {
+    } catch (error: unknown) {
+      if ((error as { code?: string })?.code === 'permission-denied') {
         this.logger.warn('Recent chats not loaded: Firestore permissions not configured');
       } else {
         this.logger.error('Failed to get recent chats:', error);
