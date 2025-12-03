@@ -1,17 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { Title } from '@angular/platform-browser';
 import { ComponentFixture } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TimerStateService } from './services/timer-state.service';
+import { of } from 'rxjs';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
   beforeEach(async () => {
+    const timerStateSpy = jasmine.createSpyObj('TimerStateService', ['setRunning'], {
+      isRunning$: of(false),
+    });
+
     await TestBed.configureTestingModule({
       imports: [AppComponent],
-      providers: [Title, provideRouter([])],
+      providers: [provideRouter([]), { provide: TimerStateService, useValue: timerStateSpy }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AppComponent);
@@ -19,188 +24,67 @@ describe('AppComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    component.ngOnDestroy();
-  });
-
   describe('Component Initialization', () => {
     it('should create the app', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should initialize with focus time', () => {
-      expect(component.currentTime).toBe(25 * 60);
-      expect(component.isFocusTime).toBe(true);
-      expect(component.displayTime).toBe('25:00');
-    });
-
-    it('should render timer display', () => {
+    it('should have toolbar with navigation buttons', () => {
       const compiled = fixture.nativeElement as HTMLElement;
-      const timerInput = compiled.querySelector('.time-input') as HTMLInputElement;
-      expect(timerInput?.value).toBe('25:00');
+      const toolbar = compiled.querySelector('mat-toolbar');
+      expect(toolbar).toBeTruthy();
     });
 
-    it('should render mode label', () => {
+    it('should render logo and title', () => {
       const compiled = fixture.nativeElement as HTMLElement;
-      const modeLabel = compiled.querySelector('.focus-label');
-      expect(modeLabel?.textContent).toContain('FOCUS');
-    });
-
-    it('should load autoStart from localStorage', () => {
-      localStorage.setItem('autoStart', 'true');
-      const newFixture = TestBed.createComponent(AppComponent);
-      const newComponent = newFixture.componentInstance;
-      newComponent.ngOnInit();
-      expect(newComponent.autoStart).toBe(true);
-      localStorage.removeItem('autoStart');
+      const logo = compiled.querySelector('.app-logo');
+      const title = compiled.querySelector('.toolbar-title');
+      expect(logo).toBeTruthy();
+      expect(title?.textContent).toContain('FocusGo');
     });
   });
 
-  describe('Timer Controls', () => {
-    it('should start timer when toggleTimer is called', () => {
-      component.toggleTimer();
-      expect(component.isRunning).toBe(true);
+  describe('Navigation State', () => {
+    it('should initialize with timer not running', () => {
+      expect(component.isTimerRunning).toBe(false);
     });
 
-    it('should pause timer when toggleTimer is called while running', () => {
-      component.startTimer();
-      expect(component.isRunning).toBe(true);
-      component.toggleTimer();
-      expect(component.isRunning).toBe(false);
+    it('should disable AI Coach button when timer is running', () => {
+      component.isTimerRunning = true;
+      fixture.detectChanges();
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      const aiCoachButton = Array.from(compiled.querySelectorAll('button')).find((btn) =>
+        btn.textContent?.includes('AI Coach')
+      );
+
+      expect(aiCoachButton?.hasAttribute('disabled')).toBe(true);
     });
 
-    it('should reset timer to current mode total time', () => {
-      component.currentTime = 100;
-      component.reset();
-      expect(component.currentTime).toBe(component.getTotalTime());
-      expect(component.isRunning).toBe(false);
-    });
+    it('should enable AI Coach button when timer is not running', () => {
+      component.isTimerRunning = false;
+      fixture.detectChanges();
 
-    it('should switch mode when skip is called', () => {
-      spyOn(component, 'switchMode');
-      component.skip();
-      expect(component.switchMode).toHaveBeenCalled();
-    });
-  });
+      const compiled = fixture.nativeElement as HTMLElement;
+      const aiCoachButton = Array.from(compiled.querySelectorAll('button')).find((btn) =>
+        btn.textContent?.includes('AI Coach')
+      );
 
-  describe('Mode Switching', () => {
-    it('should switch from focus to break time', () => {
-      component.isFocusTime = true;
-      spyOn(component, 'playAlarm');
-      component.switchMode();
-      expect(component.isFocusTime).toBe(false);
-      expect(component.currentTime).toBe(component.breakTime);
-      expect(component.playAlarm).toHaveBeenCalled();
-    });
-
-    it('should switch from break to focus time', () => {
-      component.isFocusTime = false;
-      spyOn(component, 'playAlarm');
-      component.switchMode();
-      expect(component.isFocusTime).toBe(true);
-      expect(component.currentTime).toBe(component.focusTime);
-      expect(component.playAlarm).toHaveBeenCalled();
-    });
-
-    it('should auto-start timer after switch when autoStart is enabled', () => {
-      component.autoStart = true;
-      spyOn(component, 'startTimer');
-      spyOn(component, 'playAlarm');
-      component.switchMode();
-      expect(component.startTimer).toHaveBeenCalled();
-    });
-
-    it('should not auto-start timer after switch when autoStart is disabled', () => {
-      component.autoStart = false;
-      spyOn(component, 'startTimer');
-      spyOn(component, 'playAlarm');
-      component.switchMode();
-      expect(component.startTimer).not.toHaveBeenCalled();
+      expect(aiCoachButton?.hasAttribute('disabled')).toBe(false);
     });
   });
 
-  describe('Display Updates', () => {
-    it('should format display time correctly', () => {
-      component.currentTime = 125; // 2 minutes 5 seconds
-      component.updateDisplay();
-      expect(component.displayTime).toBe('02:05');
-    });
+  describe('User Authentication', () => {
+    it('should show sign in button when no user', () => {
+      component.currentUser = null;
+      fixture.detectChanges();
 
-    it('should calculate progress for focus time', () => {
-      component.isFocusTime = true;
-      component.currentTime = component.focusTime / 2;
-      component.updateDisplay();
-      expect(component.progress).toBe(50);
-    });
+      const compiled = fixture.nativeElement as HTMLElement;
+      const signInButton = Array.from(compiled.querySelectorAll('button')).find((btn) =>
+        btn.textContent?.includes('Sign in')
+      );
 
-    it('should calculate progress for break time', () => {
-      component.isFocusTime = false;
-      component.currentTime = component.breakTime / 2;
-      component.updateDisplay();
-      expect(component.progress).toBe(50);
-    });
-  });
-
-  describe('Color Properties', () => {
-    it('should return focus backdrop color when in focus mode', () => {
-      component.isFocusTime = true;
-      expect(component.backdropColor).toBe(component.FOCUS_BACKDROP_COLOR);
-    });
-
-    it('should return break backdrop color when in break mode', () => {
-      component.isFocusTime = false;
-      expect(component.backdropColor).toBe(component.BREAK_BACKDROP_COLOR);
-    });
-
-    it('should return focus spinner color when in focus mode', () => {
-      component.isFocusTime = true;
-      expect(component.spinnerColor).toBe(component.FOCUS_SPINNER_COLOR);
-    });
-
-    it('should return break spinner color when in break mode', () => {
-      component.isFocusTime = false;
-      expect(component.spinnerColor).toBe(component.BREAK_SPINNER_COLOR);
-    });
-  });
-
-  describe('Auto-Start Toggle', () => {
-    it('should save autoStart to localStorage when changed', () => {
-      spyOn(localStorage, 'setItem');
-      component.autoStart = true;
-      component.onAutoStartChange();
-      expect(localStorage.setItem).toHaveBeenCalledWith('autoStart', 'true');
-    });
-  });
-
-  describe('Mode Labels', () => {
-    it('should return FOCUS label when in focus mode', () => {
-      component.isFocusTime = true;
-      expect(component.modeLabel).toBe('FOCUS');
-    });
-
-    it('should return BREAK label when in break mode', () => {
-      component.isFocusTime = false;
-      expect(component.modeLabel).toBe('BREAK');
-    });
-
-    it('should return forward icon when in focus mode', () => {
-      component.isFocusTime = true;
-      expect(component.skipIcon).toBe('arrow_forward');
-    });
-
-    it('should return back icon when in break mode', () => {
-      component.isFocusTime = false;
-      expect(component.skipIcon).toBe('arrow_back');
-    });
-  });
-
-  describe('Cleanup', () => {
-    it('should unsubscribe from timer on destroy', () => {
-      component.startTimer();
-      const subscription = component.timerSubscription;
-      spyOn(subscription!, 'unsubscribe');
-      component.ngOnDestroy();
-      expect(subscription!.unsubscribe).toHaveBeenCalled();
+      expect(signInButton).toBeTruthy();
     });
   });
 });

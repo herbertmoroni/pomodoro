@@ -2,4 +2,6 @@ html,
 body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background-color: ghostwhite;
+  margin: 0;
+  padding: 0;
 }
