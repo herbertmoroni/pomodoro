@@ -14,9 +14,11 @@ export const environment = {
     measurementId: 'G-0842SCQMVE',
   },
   github: {
-    // In production, this should be injected via AWS Amplify environment variables
-    // For now, AI features will be disabled in production until configured
-    pat: '',
+    // This will be replaced at build time via Amplify build command
+    // In Amplify Console: Add GITHUB_PAT environment variable
+    // Then in build settings, add to preBuild:
+    // - sed -i "s|GITHUB_PAT_PLACEHOLDER|$GITHUB_PAT|g" src/environments/environment.prod.ts
+    pat: 'GITHUB_PAT_PLACEHOLDER',
     modelsApiUrl: 'https://models.inference.ai.azure.com',
     modelName: 'gpt-4o',
   },
