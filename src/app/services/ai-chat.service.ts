@@ -24,7 +24,8 @@ export class AiChatService {
 
   async sendMessage(
     userMessage: string,
-    conversationHistory: ChatMessage[] = []
+    conversationHistory: ChatMessage[] = [],
+    sessionData?: string
   ): Promise<ChatResponse> {
     if (!this.apiToken) {
       this.logger.warn('GitHub PAT not configured. AI features are disabled.');
@@ -35,7 +36,7 @@ export class AiChatService {
     }
 
     try {
-      const systemPrompt = this.getSystemPrompt();
+      const systemPrompt = this.getSystemPrompt(sessionData);
       
       const messages: ChatMessage[] = [
         { role: 'system', content: systemPrompt },
@@ -98,8 +99,8 @@ export class AiChatService {
     }
   }
 
-  private getSystemPrompt(): string {
-    return `You are an AI Productivity Coach for FocusGo, a Pomodoro timer app.
+  private getSystemPrompt(sessionData?: string): string {
+    let prompt = `You are an AI Productivity Coach for FocusGo, a Pomodoro timer app.
 
 Your role is to:
 - Help users understand their focus patterns and productivity habits
@@ -113,9 +114,15 @@ Guidelines:
 - Use the user's actual data when available to provide specific insights
 - Be empathetic and understanding about productivity challenges
 - Avoid being judgmental or overly critical
-- If you don't have enough data, acknowledge that and provide general advice
+- If you don't have enough data, acknowledge that and provide general advice`;
 
-When the user asks about their productivity data, acknowledge that you'll analyze their session history to provide insights. For now, focus on providing helpful productivity advice and coaching.`;
+    if (sessionData) {
+      prompt += `\n\nUSER'S PRODUCTIVITY DATA (Last 30 days):\n${sessionData}\n\nUse this data to provide personalized insights when relevant. Reference specific numbers and patterns from their data.`;
+    } else {
+      prompt += `\n\nNote: No session data available yet. The user may be new or hasn't completed any Pomodoro sessions. Provide general productivity advice.`;
+    }
+
+    return prompt;
   }
 
   isAvailable(): boolean {
