@@ -56,7 +56,7 @@
         cdkAutosizeMaxRows="8"
         [(ngModel)]="userInput"
         (keydown)="onEnter($event)"
-        [disabled]="isLoading"
+        [disabled]="!currentUser || isLoading"
         placeholder="E.g., How was my week? When am I most productive?"
       ></textarea>
     </mat-form-field>
@@ -64,7 +64,7 @@
       mat-fab
       color="primary"
       (click)="sendMessage()"
-      [disabled]="!userInput.trim() || isLoading"
+      [disabled]="!currentUser || !userInput.trim() || isLoading"
       aria-label="Send message"
       class="send-button"
     >

@@ -37,6 +37,9 @@ yarn-error.log
 testem.log
 /typings
 
+# Local environment overrides with secrets (PAT tokens)
+/src/environments/environment.local.ts
+
 # System files
 .DS_Store
 Thumbs.db
