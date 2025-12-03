@@ -4,10 +4,11 @@
 // Try to import local config, fallback to CI stub if not found
 let localConfig: { github?: { pat?: string } };
 try {
-  // @ts-ignore - Dynamic import for optional file
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   localConfig = require('./environment.local').localConfig;
 } catch {
   // Fallback to CI stub when environment.local.ts doesn't exist
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   localConfig = require('./environment.local.ci').localConfig;
 }
 
