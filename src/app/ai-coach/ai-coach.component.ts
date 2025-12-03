@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { AiChatService, ChatMessage as AiChatMessage } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
+import { FirebaseService } from '../services/firebase.service';
+import { User } from 'firebase/auth';
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -34,29 +36,48 @@ interface ChatMessage {
   templateUrl: './ai-coach.component.html',
   styleUrl: './ai-coach.component.css',
 })
-export class AiCoachComponent {
+export class AiCoachComponent implements OnInit {
   messages: ChatMessage[] = [];
   userInput = '';
   isLoading = false;
+  currentUser: User | null = null;
 
-  constructor(private aiChatService: AiChatService, private logger: LoggerService) {
-    // Check if AI is available
-    if (!this.aiChatService.isAvailable()) {
-      this.messages.push({
-        role: 'assistant',
-        content:
-          "⚠️ AI features are not configured. To enable the AI Coach, please add your GitHub Personal Access Token to environment.local.ts. See the README for setup instructions.",
-        timestamp: new Date(),
-      });
-    } else {
-      // Welcome message
-      this.messages.push({
-        role: 'assistant',
-        content:
-          "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
-        timestamp: new Date(),
-      });
-    }
+  constructor(
+    private aiChatService: AiChatService,
+    private logger: LoggerService,
+    private firebaseService: FirebaseService
+  ) {}
+
+  ngOnInit() {
+    this.firebaseService.user$.subscribe((user) => {
+      this.currentUser = user;
+      
+      // Clear messages and show appropriate welcome
+      this.messages = [];
+      
+      if (!user) {
+        this.messages.push({
+          role: 'assistant',
+          content:
+            "👋 Welcome! To use the AI Coach, please sign in first. Click the 'Sign in' button in the top toolbar.",
+          timestamp: new Date(),
+        });
+      } else if (!this.aiChatService.isAvailable()) {
+        this.messages.push({
+          role: 'assistant',
+          content:
+            "⚠️ AI features are not configured. To enable the AI Coach, please add your GitHub Personal Access Token to environment.local.ts. See the README for setup instructions.",
+          timestamp: new Date(),
+        });
+      } else {
+        this.messages.push({
+          role: 'assistant',
+          content:
+            "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
+          timestamp: new Date(),
+        });
+      }
+    });
   }
 
   async sendMessage(): Promise<void> {

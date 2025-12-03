@@ -5,21 +5,19 @@
   </a>
   <span class="spacer"></span>
 
-  @if (currentUser) {
-    <button
-      mat-button
-      routerLink="/"
-      routerLinkActive="active-route"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      <mat-icon>timer</mat-icon>
-      Timer
-    </button>
-    <button mat-button routerLink="/coach" routerLinkActive="active-route">
-      <mat-icon>support_agent</mat-icon>
-      AI Coach
-    </button>
-  }
+  <button
+    mat-button
+    routerLink="/"
+    routerLinkActive="active-route"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <mat-icon>timer</mat-icon>
+    Timer
+  </button>
+  <button mat-button routerLink="/coach" routerLinkActive="active-route">
+    <mat-icon>support_agent</mat-icon>
+    AI Coach
+  </button>
 
   @if (!currentUser) {
     <button mat-button class="sign-in-button" (click)="signIn()">
