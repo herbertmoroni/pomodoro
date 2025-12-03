@@ -1,15 +1,13 @@
 .coach-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 64px); /* Subtract toolbar height */
-  background-color: #fafafa; /* Match timer background */
+  height: calc(100vh - 55px); 
 }
 
 .messages-container {
   flex: 1;
   overflow-y: auto;
   padding: 20px;
-  background-color: #fafafa; /* Match timer background */
 }
 
 .messages-wrapper {
@@ -103,10 +101,6 @@
   padding: 16px 20px;
   background-color: white;
   border-top: 1px solid #e0e0e0;
-}
-
-.messages-wrapper,
-.input-container {
   max-width: 800px;
   margin: 0 auto;
   width: 100%;
