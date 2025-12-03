@@ -1,16 +1,6 @@
 // Development environment configuration
 // For local development: Copy environment.example.ts to environment.local.ts and add your GitHub PAT
-
-// Try to import local config, fallback to CI stub if not found
-let localConfig: { github?: { pat?: string } };
-try {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  localConfig = require('./environment.local').localConfig;
-} catch {
-  // Fallback to CI stub when environment.local.ts doesn't exist
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  localConfig = require('./environment.local.ci').localConfig;
-}
+// In CI/test environments without environment.local.ts, AI features will be disabled (empty PAT)
 
 export const environment = {
   production: false,
@@ -24,9 +14,9 @@ export const environment = {
     measurementId: 'G-0842SCQMVE',
   },
   github: {
-    // GitHub PAT is loaded from environment.local.ts (gitignored)
-    // If environment.local.ts doesn't exist, AI features will be disabled
-    pat: localConfig?.github?.pat || '',
+    // GitHub PAT loaded from environment.local.ts (gitignored)
+    // Falls back to empty string in CI/test environments
+    pat: '',
     modelsApiUrl: 'https://models.inference.ai.azure.com',
     modelName: 'gpt-4o',
   },
