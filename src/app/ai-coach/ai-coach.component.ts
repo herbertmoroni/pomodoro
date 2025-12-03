@@ -11,6 +11,7 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { AiChatService, ChatMessage as AiChatMessage } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
 import { FirebaseService } from '../services/firebase.service';
+import { SessionService, PomodoroSession } from '../services/session.service';
 import { User } from 'firebase/auth';
 
 interface ChatMessage {
@@ -45,7 +46,8 @@ export class AiCoachComponent implements OnInit {
   constructor(
     private aiChatService: AiChatService,
     private logger: LoggerService,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit() {
@@ -107,8 +109,11 @@ export class AiCoachComponent implements OnInit {
           content: msg.content,
         }));
 
-      // Call AI service
-      const response = await this.aiChatService.sendMessage(question, conversationHistory);
+      // Fetch user session data for context
+      const sessionData = await this.getSessionContext();
+
+      // Call AI service with session context
+      const response = await this.aiChatService.sendMessage(question, conversationHistory, sessionData);
 
       const aiResponse: ChatMessage = {
         role: 'assistant',
@@ -136,6 +141,94 @@ export class AiCoachComponent implements OnInit {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       this.sendMessage();
+    }
+  }
+
+  private async getSessionContext(): Promise<string | undefined> {
+    if (!this.currentUser) {
+      return undefined;
+    }
+
+    try {
+      const sessions = await this.sessionService.getSessions();
+      if (sessions.length === 0) {
+        return undefined;
+      }
+
+      // Sort by start time descending (most recent first)
+      sessions.sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+
+      // Get last 30 days of data
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const recentSessions = sessions.filter(
+        (s) => new Date(s.startTime) >= thirtyDaysAgo
+      );
+
+      // Calculate statistics
+      const totalSessions = recentSessions.length;
+      const completedSessions = recentSessions.filter((s) => s.completed).length;
+      const totalFocusTime = recentSessions.reduce((sum, s) => sum + s.actualDuration, 0);
+      const avgDuration = totalSessions > 0 ? totalFocusTime / totalSessions : 0;
+
+      // Group by category
+      const categoryStats: { [key: string]: { count: number; time: number } } = {};
+      recentSessions.forEach((s) => {
+        if (!categoryStats[s.categoryName]) {
+          categoryStats[s.categoryName] = { count: 0, time: 0 };
+        }
+        categoryStats[s.categoryName].count++;
+        categoryStats[s.categoryName].time += s.actualDuration;
+      });
+
+      // Group by day of week
+      const dayStats: { [key: number]: number } = {};
+      recentSessions.forEach((s) => {
+        dayStats[s.dayOfWeek] = (dayStats[s.dayOfWeek] || 0) + 1;
+      });
+
+      // Group by hour of day
+      const hourStats: { [key: number]: number } = {};
+      recentSessions.forEach((s) => {
+        hourStats[s.hourOfDay] = (hourStats[s.hourOfDay] || 0) + 1;
+      });
+
+      // Format as concise JSON
+      const context = {
+        summary: {
+          totalSessions,
+          completedSessions,
+          completionRate: totalSessions > 0 ? Math.round((completedSessions / totalSessions) * 100) : 0,
+          totalFocusMinutes: Math.round(totalFocusTime / 60),
+          avgSessionMinutes: Math.round(avgDuration / 60),
+        },
+        categories: Object.entries(categoryStats).map(([name, stats]) => ({
+          name,
+          sessions: stats.count,
+          minutes: Math.round(stats.time / 60),
+        })),
+        patterns: {
+          mostProductiveDays: Object.entries(dayStats)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 3)
+            .map(([day]) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][parseInt(day)]),
+          mostProductiveHours: Object.entries(hourStats)
+            .sort(([, a], [, b]) => b - a)
+            .slice(0, 3)
+            .map(([hour]) => `${hour}:00`),
+        },
+        recentSessions: recentSessions.slice(0, 10).map((s) => ({
+          date: new Date(s.startTime).toLocaleDateString(),
+          category: s.categoryName,
+          minutes: Math.round(s.actualDuration / 60),
+          completed: s.completed,
+        })),
+      };
+
+      return JSON.stringify(context, null, 2);
+    } catch (error) {
+      this.logger.error('Error fetching session context:', error);
+      return undefined;
     }
   }
 }
