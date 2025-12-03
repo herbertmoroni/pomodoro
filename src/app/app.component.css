@@ -22,6 +22,11 @@ mat-toolbar {
   opacity: 0.9;
 }
 
+.logo-link.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
 .app-logo {
   width: 32px;
   height: 32px;

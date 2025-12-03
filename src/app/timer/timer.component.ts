@@ -16,6 +16,7 @@ import { FirebaseService } from '../services/firebase.service';
 import { SessionService } from '../services/session.service';
 import { CategoryService } from '../services/category.service';
 import { LoggerService } from '../services/logger.service';
+import { TimerStateService } from '../services/timer-state.service';
 import { ManageCategoriesComponent } from '../manage-categories/manage-categories.component';
 import {
   CategoryDialogComponent,
@@ -96,6 +97,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   lastSessionWasBreak: boolean = false;
   currentUser: User | null = null;
   private originalDisplayTime: string = '';
+  private stateLoaded = false;
 
   constructor(
     private titleService: Title,
@@ -104,7 +106,8 @@ export class TimerComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private timerStateService: TimerStateService
   ) {
     this.originalTitle = this.titleService.getTitle();
     this.currentTime = this.focusTime;
@@ -112,10 +115,15 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.firebaseService.user$.subscribe((user) => {
+    this.firebaseService.user$.subscribe(async (user) => {
       this.currentUser = user;
       if (user) {
         this.loadUserCategories();
+        // Load saved timer state from Firestore only once
+        if (!this.stateLoaded) {
+          await this.loadSavedState();
+          this.stateLoaded = true;
+        }
       } else {
         this.resetToDefaultCategories();
       }
@@ -283,6 +291,10 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    // Save state if paused before component is destroyed
+    if (!this.isRunning && this.currentTime !== this.getTotalTime()) {
+      this.saveCurrentState();
+    }
     this.stopTimer();
     this.titleService.setTitle(this.originalTitle);
   }
@@ -309,6 +321,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   startTimer() {
     this.isRunning = true;
+    this.timerStateService.setRunning(true);
     this.startTime = Date.now() - (this.getTotalTime() - this.currentTime) * 1000;
 
     if (this.isFocusTime && !this.sessionStartTime) {
@@ -334,9 +347,11 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   pauseTimer() {
     this.isRunning = false;
+    this.timerStateService.setRunning(false);
     if (this.timerSubscription) {
       this.timerSubscription.unsubscribe();
     }
+    this.saveCurrentState();
     this.updatePageTitle();
   }
 
@@ -361,6 +376,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.currentTime = this.getTotalTime();
     this.updateDisplay();
     this.updatePageTitle();
+    this.timerStateService.clearFirestore();
   }
 
   skip() {
@@ -379,6 +395,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.isFocusTime = !this.isFocusTime;
     this.currentTime = this.getTotalTime();
     this.updateDisplay();
+    this.timerStateService.clearFirestore();
     if (this.autoStart) {
       this.startTimer();
     }
@@ -566,5 +583,37 @@ export class TimerComponent implements OnInit, OnDestroy {
       { id: 'urgent', name: 'Urgent', color: '#ef4444', icon: 'label' },
       { id: 'exercise', name: 'Exercise', color: '#eab308', icon: 'label' },
     ];
+  }
+
+  private async loadSavedState() {
+    const savedState = await this.timerStateService.loadFromFirestore();
+    if (savedState) {
+      this.currentTime = savedState.currentTime;
+      this.isFocusTime = savedState.isFocusTime;
+      this.sessionStartTime = savedState.sessionStartTime;
+      this.consecutiveSessionCount = savedState.consecutiveSessionCount;
+      this.lastSessionWasBreak = savedState.lastSessionWasBreak;
+      
+      // Restore selected category after categories are loaded
+      const category = this.categories.find((c) => c.id === savedState.selectedCategoryId);
+      if (category) {
+        this.selectedCategory = category;
+      }
+      
+      this.updateDisplay();
+    }
+  }
+
+  private saveCurrentState() {
+    if (this.currentUser) {
+      this.timerStateService.saveToFirestore({
+        currentTime: this.currentTime,
+        isFocusTime: this.isFocusTime,
+        selectedCategoryId: this.selectedCategory.id,
+        sessionStartTime: this.sessionStartTime,
+        consecutiveSessionCount: this.consecutiveSessionCount,
+        lastSessionWasBreak: this.lastSessionWasBreak,
+      });
+    }
   }
 }

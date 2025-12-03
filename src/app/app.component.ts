@@ -5,9 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { FirebaseService } from './services/firebase.service';
 import { LoggerService } from './services/logger.service';
+import { TimerStateService } from './services/timer-state.service';
 import { User } from 'firebase/auth';
 
 @Component({
@@ -20,6 +22,7 @@ import { User } from 'firebase/auth';
     MatToolbarModule,
     MatSnackBarModule,
     MatMenuModule,
+    MatTooltipModule,
     RouterLink,
     RouterOutlet,
     RouterLinkActive,
@@ -29,16 +32,22 @@ import { User } from 'firebase/auth';
 })
 export class AppComponent implements OnInit {
   currentUser: User | null = null;
+  isTimerRunning = false;
 
   constructor(
     private firebaseService: FirebaseService,
     private snackBar: MatSnackBar,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private timerStateService: TimerStateService
   ) {}
 
   ngOnInit() {
     this.firebaseService.user$.subscribe((user) => {
       this.currentUser = user;
+    });
+
+    this.timerStateService.isRunning$.subscribe((isRunning) => {
+      this.isTimerRunning = isRunning;
     });
   }
 
