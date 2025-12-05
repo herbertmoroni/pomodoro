@@ -24,6 +24,9 @@ export class FirebaseService {
   private userSubject = new BehaviorSubject<User | null>(null);
   public user$: Observable<User | null> = this.userSubject.asObservable();
 
+  private redirectResultSubject = new BehaviorSubject<{ success: boolean; error?: any } | null>(null);
+  public redirectResult$: Observable<{ success: boolean; error?: any } | null> = this.redirectResultSubject.asObservable();
+
   constructor() {
     // Initialize Firebase
     this.app = initializeApp(environment.firebase);
@@ -31,9 +34,20 @@ export class FirebaseService {
     this.db = getFirestore(this.app);
 
     // Check for redirect result on app load (for mobile sign-in)
-    getRedirectResult(this.auth).catch((error) => {
-      console.error('Redirect sign-in error:', error);
-    });
+    getRedirectResult(this.auth)
+      .then((result) => {
+        if (result) {
+          // Successfully signed in after redirect
+          console.log('Redirect sign-in successful:', result.user?.email);
+          this.redirectResultSubject.next({ success: true });
+        } else {
+          console.log('No pending redirect sign-in');
+        }
+      })
+      .catch((error) => {
+        console.error('Redirect sign-in error:', error.code, error.message);
+        this.redirectResultSubject.next({ success: false, error });
+      });
 
     // Listen to auth state changes
     onAuthStateChanged(this.auth, (user) => {
@@ -54,6 +68,11 @@ export class FirebaseService {
   // Sign in with Google
   async signInWithGoogle(): Promise<User | null> {
     const provider = new GoogleAuthProvider();
+    
+    // Add provider settings to improve reliability
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
 
     // Detect if device is mobile
     const isMobile =

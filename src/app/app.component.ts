@@ -49,16 +49,40 @@ export class AppComponent implements OnInit {
     this.timerStateService.isRunning$.subscribe((isRunning) => {
       this.isTimerRunning = isRunning;
     });
+
+    // Handle redirect result for mobile sign-in
+    this.firebaseService.redirectResult$.subscribe((result) => {
+      if (result) {
+        if (result.success) {
+          this.snackBar.open('Signed in successfully', 'Close', {
+            duration: 3000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+        } else {
+          this.logger.error('Redirect sign-in failed:', result.error);
+          this.snackBar.open('Sign in failed. Please try again.', 'Close', {
+            duration: 5000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom',
+          });
+        }
+      }
+    });
   }
 
   async signIn() {
     try {
-      await this.firebaseService.signInWithGoogle();
-      this.snackBar.open('Signed in successfully', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
+      const user = await this.firebaseService.signInWithGoogle();
+      // Only show success message for popup (desktop) sign-in
+      // For redirect (mobile), message will be shown after redirect completes
+      if (user) {
+        this.snackBar.open('Signed in successfully', 'Close', {
+          duration: 3000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+        });
+      }
     } catch (error) {
       this.logger.error('Sign in failed:', error);
       this.snackBar.open('Sign in failed. Please try again.', 'Close', {
