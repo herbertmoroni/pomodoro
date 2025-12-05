@@ -40,15 +40,25 @@ export class FirebaseService {
       console.error('Error setting auth persistence:', error);
     });
 
-    // Listen to auth state changes
+    // Listen to auth state changes - this handles both popup and redirect
     onAuthStateChanged(this.auth, (user) => {
       this.userSubject.next(user);
     });
 
-    // Check for redirect result (this runs on EVERY page load)
-    getRedirectResult(this.auth).catch((error) => {
-      console.error('Redirect error:', error.code, error.message);
-    });
+    // Handle redirect result (runs once on page load after redirect)
+    getRedirectResult(this.auth)
+      .then((result) => {
+        if (result) {
+          // User signed in via redirect
+          console.log('Redirect sign-in successful');
+        }
+      })
+      .catch((error) => {
+        // Only log if it's not the "missing initial state" error
+        if (error.code !== 'auth/missing-initial-state') {
+          console.error('Redirect error:', error.code, error.message);
+        }
+      });
   }
 
   // Get current user
