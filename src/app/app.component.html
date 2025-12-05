@@ -32,9 +32,14 @@
   </button>
 
   @if (!currentUser) {
-    <button mat-button class="sign-in-button" (click)="signIn()">
+    <button 
+      mat-button 
+      class="sign-in-button" 
+      (click)="signIn()"
+      [disabled]="isAuthProcessing"
+    >
       <mat-icon>login</mat-icon>
-      Sign in
+      {{ isAuthProcessing ? 'Signing in...' : 'Sign in' }}
     </button>
   } @else {
     <button

@@ -33,6 +33,7 @@ import { User } from 'firebase/auth';
 export class AppComponent implements OnInit {
   currentUser: User | null = null;
   isTimerRunning = false;
+  isAuthProcessing = false;
 
   constructor(
     private firebaseService: FirebaseService,
@@ -50,32 +51,16 @@ export class AppComponent implements OnInit {
       this.isTimerRunning = isRunning;
     });
 
-    // Handle redirect result for mobile sign-in
-    this.firebaseService.redirectResult$.subscribe((result) => {
-      if (result) {
-        if (result.success) {
-          this.snackBar.open('Signed in successfully', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
-        } else {
-          this.logger.error('Redirect sign-in failed:', result.error);
-          this.snackBar.open('Sign in failed. Please try again.', 'Close', {
-            duration: 5000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
-        }
-      }
+    // Show loading state while signing in
+    this.firebaseService.authProcessing$.subscribe((processing) => {
+      this.isAuthProcessing = processing;
     });
   }
 
   async signIn() {
     try {
       const user = await this.firebaseService.signInWithGoogle();
-      // Only show success message for popup (desktop) sign-in
-      // For redirect (mobile), message will be shown after redirect completes
+      // Only show message for popup (desktop), redirect (mobile) will show after return
       if (user) {
         this.snackBar.open('Signed in successfully', 'Close', {
           duration: 3000,
