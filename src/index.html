@@ -1,20 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google Tag Manager -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0842SCQMVE"></script>
     <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != 'dataLayer' ? '&l=' + l : '';
-        j.async = true;
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, 'script', 'dataLayer', 'GTM-54NVQSB3');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-0842SCQMVE');
     </script>
-    <!-- End Google Tag Manager -->
 
     <!-- Microsoft Clarity -->
     <script type="text/javascript">
@@ -34,7 +29,7 @@
     <!-- End Microsoft Clarity -->
 
     <meta charset="utf-8" />
-    <title>FocusGo - Free Pomodoro Timer</title>
+    <title>FocusGo</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
@@ -85,16 +80,6 @@
     <meta name="google-site-verification" content="S6bhoNPse1_hruRFPNINcmyVi4c1CsIZMBAxD-MOGSA" />
   </head>
   <body class="mat-typography">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript
-      ><iframe
-        src="https://www.googletagmanager.com/ns.html?id=GTM-54NVQSB3"
-        height="0"
-        width="0"
-        style="display: none; visibility: hidden"
-      ></iframe
-    ></noscript>
-    <!-- End Google Tag Manager (noscript) -->
     <app-root></app-root>
     <noscript>Please enable JavaScript to continue using this application.</noscript>
   </body>
