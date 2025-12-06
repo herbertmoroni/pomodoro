@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { LoggerService } from './logger.service';
-
-export interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
+import { AiChatMessage } from '../models';
 
 export interface ChatResponse {
   message: string;
@@ -24,7 +20,7 @@ export class AiChatService {
 
   async sendMessage(
     userMessage: string,
-    conversationHistory: ChatMessage[] = [],
+    conversationHistory: AiChatMessage[] = [],
     sessionData?: string
   ): Promise<ChatResponse> {
     if (!this.apiToken) {
@@ -39,7 +35,7 @@ export class AiChatService {
     try {
       const systemPrompt = this.getSystemPrompt(sessionData);
 
-      const messages: ChatMessage[] = [
+      const messages: AiChatMessage[] = [
         { role: 'system', content: systemPrompt },
         ...conversationHistory,
         { role: 'user', content: userMessage },

@@ -12,12 +12,7 @@ import {
   Timestamp,
   limit,
 } from 'firebase/firestore';
-
-export interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
+import { ChatMessage } from '../models';
 
 @Injectable({
   providedIn: 'root',

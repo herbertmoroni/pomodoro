@@ -1,22 +1,7 @@
 import { Injectable } from '@angular/core';
 import { collection, addDoc, query, where, getDocs, Timestamp } from 'firebase/firestore';
 import { FirebaseService } from './firebase.service';
-
-export interface PomodoroSession {
-  id: string;
-  userId: string;
-  categoryId: string;
-  categoryName: string;
-  duration: number;
-  actualDuration: number;
-  startTime: string;
-  endTime: string;
-  completed: boolean;
-  dayOfWeek: number;
-  hourOfDay: number;
-  consecutiveSession: number;
-  followedBreak: boolean;
-}
+import { PomodoroSession, PomodoroSessionWithMetadata } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -42,7 +27,7 @@ export class SessionService {
   }
 
   // Get user sessions from Firestore
-  async getSessions(): Promise<PomodoroSession[]> {
+  async getSessions(): Promise<PomodoroSessionWithMetadata[]> {
     const user = this.firebaseService.getCurrentUser();
     if (!user) {
       return [];
@@ -53,13 +38,13 @@ export class SessionService {
     const q = query(sessionsRef, where('userId', '==', user.uid));
 
     const querySnapshot = await getDocs(q);
-    const sessions: PomodoroSession[] = [];
+    const sessions: PomodoroSessionWithMetadata[] = [];
 
     querySnapshot.forEach((doc) => {
       sessions.push({
         id: doc.id,
         ...doc.data(),
-      } as PomodoroSession);
+      } as PomodoroSessionWithMetadata);
     });
 
     return sessions;

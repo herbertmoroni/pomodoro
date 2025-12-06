@@ -1,13 +1,17 @@
 .coach-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 55px);
+  height: calc(100vh - 64px);
+  max-height: calc(100vh - 64px);
+  overflow: hidden;
 }
 
 .messages-container {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 20px;
+  min-height: 0;
 }
 
 .messages-wrapper {
