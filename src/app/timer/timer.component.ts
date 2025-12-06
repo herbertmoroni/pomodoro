@@ -9,7 +9,6 @@ import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { FirebaseService } from '../services/firebase.service';
@@ -17,6 +16,7 @@ import { SessionService } from '../services/session.service';
 import { CategoryService } from '../services/category.service';
 import { LoggerService } from '../services/logger.service';
 import { TimerStateService } from '../services/timer-state.service';
+import { NotificationService } from '../services/notification.service';
 import { ManageCategoriesComponent } from '../manage-categories/manage-categories.component';
 import { CategoryDialogComponent } from '../category-dialog/category-dialog.component';
 import { User } from 'firebase/auth';
@@ -34,7 +34,6 @@ import { Category, PomodoroSession, CategoryDialogData } from '../models';
     FormsModule,
     MatTooltipModule,
     MatMenuModule,
-    MatSnackBarModule,
     MatDividerModule,
   ],
   templateUrl: './timer.component.html',
@@ -80,7 +79,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     private firebaseService: FirebaseService,
     private sessionService: SessionService,
     private categoryService: CategoryService,
-    private snackBar: MatSnackBar,
+    private notification: NotificationService,
     private dialog: MatDialog,
     private logger: LoggerService,
     private timerStateService: TimerStateService
@@ -411,11 +410,7 @@ export class TimerComponent implements OnInit, OnDestroy {
 
   onCategoryClick() {
     if (!this.currentUser) {
-      this.snackBar.open('Sign in to track sessions', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
+      this.notification.info('Sign in to track sessions');
     }
   }
 
@@ -466,18 +461,10 @@ export class TimerComponent implements OnInit, OnDestroy {
   private async saveSessionToFirestore(session: PomodoroSession) {
     try {
       await this.sessionService.saveSession(session);
-      this.snackBar.open('Session saved to cloud ☁️', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
+      this.notification.success('Session saved to cloud ☁️');
     } catch (error) {
       this.logger.error('Failed to save session to Firestore:', error);
-      this.snackBar.open('Failed to save session to cloud', 'Close', {
-        duration: 5000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
+      this.notification.error('Failed to save session to cloud');
     }
   }
 
@@ -502,18 +489,10 @@ export class TimerComponent implements OnInit, OnDestroy {
         try {
           const order = await this.categoryService.getNextOrderNumber();
           await this.categoryService.addCategory(result.name, result.color, result.icon, order);
-          this.snackBar.open('Category added', 'Close', {
-            duration: 2000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
+          this.notification.success('Category added');
         } catch (error) {
           this.logger.error('Failed to add category:', error);
-          this.snackBar.open('Failed to add category', 'Close', {
-            duration: 3000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
+          this.notification.error('Failed to add category');
         }
       }
     });
@@ -538,11 +517,7 @@ export class TimerComponent implements OnInit, OnDestroy {
       } else {
         try {
           await this.categoryService.initializeDefaultCategories();
-          this.snackBar.open('Default categories created', 'Close', {
-            duration: 2000,
-            horizontalPosition: 'center',
-            verticalPosition: 'bottom',
-          });
+          this.notification.success('Default categories created');
         } catch (error) {
           this.logger.error('Failed to initialize default categories:', error);
           this.resetToDefaultCategories();

@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { FirebaseService } from './services/firebase.service';
 import { LoggerService } from './services/logger.service';
 import { TimerStateService } from './services/timer-state.service';
+import { NotificationService } from './services/notification.service';
 import { User } from 'firebase/auth';
 
 @Component({
@@ -20,7 +20,6 @@ import { User } from 'firebase/auth';
     MatIconModule,
     MatButtonModule,
     MatToolbarModule,
-    MatSnackBarModule,
     MatMenuModule,
     MatTooltipModule,
     RouterLink,
@@ -37,7 +36,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private firebaseService: FirebaseService,
-    private snackBar: MatSnackBar,
+    private notification: NotificationService,
     private logger: LoggerService,
     private timerStateService: TimerStateService
   ) {}
@@ -62,28 +61,16 @@ export class AppComponent implements OnInit {
       const user = await this.firebaseService.signInWithGoogle();
       // Only show message for popup (desktop), redirect (mobile) will show after return
       if (user) {
-        this.snackBar.open('Signed in successfully', 'Close', {
-          duration: 3000,
-          horizontalPosition: 'center',
-          verticalPosition: 'bottom',
-        });
+        this.notification.success('Signed in successfully');
       }
     } catch (error) {
       this.logger.error('Sign in failed:', error);
-      this.snackBar.open('Sign in failed. Please try again.', 'Close', {
-        duration: 5000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
+      this.notification.error('Sign in failed. Please try again.');
     }
   }
 
   async signOut() {
     await this.firebaseService.signOut();
-    this.snackBar.open('Signed out', 'Close', {
-      duration: 2000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
+    this.notification.info('Signed out');
   }
 }
