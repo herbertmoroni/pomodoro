@@ -19,7 +19,7 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-lg);
 }
 
 .message {
@@ -62,9 +62,9 @@
 .message-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-  color: #666;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-secondary);
   font-size: 14px;
   font-weight: 500;
 }
@@ -79,7 +79,7 @@
   white-space: pre-wrap;
   word-wrap: break-word;
   line-height: 1.6;
-  color: #333;
+  color: var(--color-text-primary);
 }
 
 .loading-card {
@@ -89,22 +89,22 @@
 .loading-indicator {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 0;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) 0;
 }
 
 .loading-text {
-  color: #666;
+  color: var(--color-text-secondary);
   font-style: italic;
 }
 
 .input-container {
   flex-shrink: 0;
   display: flex;
-  gap: 12px;
-  padding: 16px 20px;
-  background-color: white;
-  border-top: 1px solid #e0e0e0;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background-color: var(--color-bg-card);
+  border-top: 1px solid var(--color-divider);
   max-width: 800px;
   margin: 0 auto;
   width: 100%;

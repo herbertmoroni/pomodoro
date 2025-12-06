@@ -25,7 +25,7 @@
 }
 
 .custom-spinner ::ng-deep circle {
-  stroke: #005cbb;
+  stroke: var(--color-focus-dark);
 }
 
 .timer-display {

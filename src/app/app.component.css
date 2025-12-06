@@ -4,13 +4,13 @@ mat-toolbar {
   z-index: 1000;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
 
 .logo-link {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-md);
   text-decoration: none;
   color: inherit;
   cursor: pointer;
@@ -28,7 +28,7 @@ mat-toolbar {
 .app-logo {
   width: 32px;
   height: 32px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 .toolbar-title {
@@ -38,7 +38,7 @@ mat-toolbar {
 
 .active-route {
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
 }
 
 .spacer {
@@ -48,5 +48,5 @@ mat-toolbar {
 .sign-in-button {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
