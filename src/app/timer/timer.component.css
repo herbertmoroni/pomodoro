@@ -167,3 +167,78 @@
   .mdc-switch__track::after {
   background-color: #5393e7 !important;
 }
+
+.quick-start-guide {
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-lg);
+  background: rgba(25, 118, 210, 0.04);
+  border-radius: var(--border-radius-md);
+  border-left: 3px solid var(--color-primary);
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.guide-title {
+  margin: 0 0 var(--spacing-md) 0;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--color-primary);
+}
+
+.guide-intro {
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+.guide-subheading {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.guide-steps {
+  list-style: disc;
+  padding-left: 20px;
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.guide-steps li {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.guide-steps li:last-child {
+  margin-bottom: 0;
+}
+
+.guide-cta {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+
+.guide-cta strong {
+  color: var(--color-primary);
+}
+
+/* Mobile optimization */
+@media (max-width: 600px) {
+  .quick-start-guide {
+    max-width: 280px;
+    padding: var(--spacing-md);
+  }
+
+  .guide-intro,
+  .guide-subheading,
+  .guide-steps li,
+  .guide-cta {
+    font-size: 12px;
+  }
+}
