@@ -75,11 +75,13 @@ export class FirebaseService {
   async signInWithGoogle(): Promise<User | null> {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-      prompt: 'select_account'
+      prompt: 'select_account',
     });
 
     // Detect mobile by user agent (not window size)
-    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    );
 
     try {
       if (isMobileDevice) {

@@ -2,6 +2,24 @@
 
 This document outlines the vision and strategy for AI-powered productivity coaching in FocusGo. It captures the **what** and **why** of our AI features, not the implementation details.
 
+## Current Implementation Status
+
+**What's Live:**
+- ✅ AI Coach conversational interface
+- ✅ Session data integration (last 30 days)
+- ✅ Chat history persistence
+- ✅ Context-aware responses with session analytics
+- ✅ GitHub Models API integration (GPT-4o-mini)
+- ✅ Error handling and graceful degradation
+
+**Next Phase (Layer 2 - Semantic Memory):**
+- 🔄 Memory extraction from conversations
+- 🔄 Goal and experiment tracking
+- 🔄 Tool calling for dynamic data queries
+- 🔄 Long-term context preservation
+
+---
+
 ## Vision
 
 Transform FocusGo from a simple timer into an **intelligent productivity coach** that:
@@ -33,7 +51,7 @@ Think of it as **having a productivity expert who knows your work style, remembe
 
 Our data architecture is designed to enable intelligent coaching while keeping costs low and respecting user privacy. It combines three layers of context:
 
-### Layer 1: Session Tracking (✅ Implemented)
+### Layer 1: Session Tracking (✅ Fully Implemented)
 
 Every Pomodoro session captures rich metadata optimized for AI analysis:
 
@@ -55,6 +73,12 @@ interface PomodoroSession {
 ```
 
 **Storage**: Firestore (`users/{userId}/sessions/{sessionId}`)
+**Status**: ✅ Implemented and working in production
+**Features**:
+- Real-time cloud sync
+- Last 30 days automatically included in AI context
+- Comprehensive analytics (completion rates, timing patterns, categories)
+- Used by AI Coach for personalized insights
 
 #### Why This Structure?
 
@@ -189,7 +213,7 @@ Memory extraction (hidden from user):
 
 This happens automatically, users don't see the extraction step.
 
-### Layer 3: Chat History (🔄 Planned)
+### Layer 3: Chat History (✅ Implemented)
 
 Full conversation threads are stored for user review and recent context:
 
@@ -213,6 +237,12 @@ interface ChatMessage {
 ```
 
 **Storage**: Firestore (`users/{userId}/chats/{chatId}/messages/{messageId}`)
+**Status**: ✅ Implemented and working in production
+**Features**:
+- Persistent chat history across sessions
+- Automatic chat session management
+- Recent messages provide conversation context
+- Messages stored with timestamps for continuity
 
 #### Why Store Full Chat History?
 
@@ -232,28 +262,23 @@ interface ChatMessage {
 - Export everything in JSON format
 - See exactly what AI "remembers"
 
-### Complete Context Flow
+### Complete Context Flow (Current Implementation)
 
 When user asks a question, AI receives:
 
 ```typescript
 {
-  model: "gpt-4o",
+  model: "gpt-4o-mini",
   messages: [
     {
       role: "system",
       content: `You are a productivity coach for FocusGo.
       
-      USER PROFILE: ${memory.profile}
-      ACTIVE GOALS: ${memory.goals}
-      ACTIVE EXPERIMENTS: ${memory.experiments}
-      RECENT INSIGHTS: ${memory.insights}
-      
-      RECENT SESSION SUMMARY (last 7 days):
-      ${sessionAnalytics}  // Completion rates, timing patterns, categories
+      USER'S PRODUCTIVITY DATA (Last 30 days):
+      ${sessionData}  // Detailed stats on completion rates, timing patterns, categories
       `
     },
-    ...recentChatMessages,  // Last 10 messages for immediate context
+    ...conversationHistory,  // Previous messages in current chat
     { 
       role: "user", 
       content: userQuestion 
@@ -262,13 +287,16 @@ When user asks a question, AI receives:
 }
 ```
 
-This gives AI:
-- ✅ Long-term memory (semantic)
-- ✅ Recent conversation context (chat history)
-- ✅ Real productivity data (sessions)
-- ✅ User's goals and experiments
+**Current Context Includes:**
+- ✅ Recent conversation history (full chat thread)
+- ✅ Last 30 days of session data with analytics
+- ✅ Completion rates, timing patterns, category breakdowns
 
-**Total context**: ~2,000-2,500 tokens (efficient and affordable)
+**Next Phase Will Add:**
+- 🔄 Semantic memory (long-term context)
+- 🔄 Active goals and experiments
+- 🔄 Key insights and recommendations
+- 🔄 Tool calling for dynamic data queries
 
 ---
 

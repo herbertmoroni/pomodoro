@@ -12,24 +12,27 @@ I built this as both a personal productivity tool and a learning laboratory whil
 **Current Status:**
 - ✅ Core Pomodoro timer functionality
 - ✅ **Flexible timer duration** (click to edit, supports shorthand like "5" → "5:00")
+- ✅ **AI Coach** - Conversational productivity insights powered by GitHub Models
 - ✅ Category/tag system for organizing sessions
+- ✅ **Custom category management** (add/edit/delete/drag-to-reorder)
 - ✅ Session tracking with comprehensive metadata
+- ✅ **Timer state persistence** - Resume exactly where you left off
+- ✅ **Chat history persistence** - AI Coach remembers your conversations
 - ✅ Progressive Web App (works offline, installs on devices)
-- ✅ Material Design UI with toolbar
+- ✅ Material Design UI with responsive toolbar
 - ✅ AWS Amplify serverless deployment
 - ✅ Firebase Authentication (Google sign-in)
 - ✅ Cloud sync with Firestore
-- ✅ User notifications with Material Snackbar
-- ✅ Custom category management (add/edit/delete/reorder)
-- 🔄 **Next: Analytics dashboard and AI integration**
+- ✅ User notifications system
+- 🔄 **Next: Analytics dashboard and semantic memory for AI Coach**
 
 ## Tech Stack
 
 - **Frontend:** Angular 18 + Angular Material
 - **Authentication:** Firebase Auth (Google OAuth)
 - **Database:** Firebase Firestore
+- **AI:** GitHub Models API (GPT-4o-mini)
 - **Hosting:** AWS Amplify (serverless)
-- **Future:** AI APIs for time analysis features
 
 ## What I'm Learning
 
@@ -41,12 +44,24 @@ This project let me explore AWS Amplify's serverless architecture with Angular:
 - Cost-effective hosting for personal projects
 - Firebase Crashlytics for tracking user errors in production (authentication failures, Firestore errors, etc.)
 
-### AI Integration Exploration (In Progress)
-Currently evaluating different approaches for adding AI-powered time analysis:
-- Tested GitHub Models for initial prototyping
-- Exploring cost/performance trade-offs of various AI APIs
-- Researching security patterns for AI integration
-- These learnings will inform the AI Security book
+### AI Integration (Implemented)
+The AI Coach feature is live and provides:
+- **Conversational insights** about your productivity patterns
+- **Session data analysis** with stats on completion rates, best times, categories
+- **Chat history persistence** across sessions
+- **Context-aware responses** using your last 30 days of Pomodoro data
+- Uses GitHub Models API (GPT-4o-mini) for cost-effective AI
+
+**What's Working:**
+- ✅ Real-time chat with session data context
+- ✅ Firestore persistence for chat history
+- ✅ Error handling and graceful degradation
+- ✅ Mobile-responsive chat interface
+
+**Next Steps:**
+- Semantic memory extraction (Level 2 RAG)
+- Tool calling for dynamic data queries (Level 3)
+- Personal productivity experiments tracking
 
 
 ## Data Structure & AI Integration
