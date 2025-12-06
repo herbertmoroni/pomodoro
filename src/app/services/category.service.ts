@@ -15,16 +15,7 @@ import {
 } from 'firebase/firestore';
 import { FirebaseService } from './firebase.service';
 import { Observable, switchMap, of } from 'rxjs';
-
-export interface Category {
-  id: string;
-  name: string;
-  color: string;
-  icon: string;
-  userId: string;
-  order: number;
-  createdAt: string;
-}
+import { Category, CategoryWithMetadata } from '../models';
 
 @Injectable({
   providedIn: 'root',
@@ -37,23 +28,23 @@ export class CategoryService {
   }
 
   // Get all categories for the current user with real-time updates
-  getUserCategories(): Observable<Category[]> {
+  getUserCategories(): Observable<CategoryWithMetadata[]> {
     return this.firebaseService.user$.pipe(
       switchMap((user) => {
         if (!user) {
           return of([]);
         }
-        return new Observable<Category[]>((observer) => {
+        return new Observable<CategoryWithMetadata[]>((observer) => {
           const categoriesRef = collection(this.firestore, 'categories');
           const q = query(categoriesRef, where('userId', '==', user.uid), orderBy('order', 'asc'));
 
           // Real-time listener
           const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const categories: Category[] = [];
+            const categories: CategoryWithMetadata[] = [];
             querySnapshot.forEach((docSnapshot) => {
               categories.push({
                 id: docSnapshot.id,
-                ...(docSnapshot.data() as Omit<Category, 'id'>),
+                ...(docSnapshot.data() as Omit<CategoryWithMetadata, 'id'>),
               });
             });
             observer.next(categories);
@@ -94,7 +85,7 @@ export class CategoryService {
    */
   async updateCategory(
     categoryId: string,
-    updates: Partial<Omit<Category, 'id' | 'userId' | 'createdAt'>>
+    updates: Partial<Omit<CategoryWithMetadata, 'id' | 'userId' | 'createdAt'>>
   ): Promise<void> {
     const categoryRef = doc(this.firestore, 'categories', categoryId);
     await updateDoc(categoryRef, updates);
@@ -133,7 +124,7 @@ export class CategoryService {
 
     if (querySnapshot.empty) return 0;
 
-    const orders = querySnapshot.docs.map((doc) => (doc.data() as Category).order);
+    const orders = querySnapshot.docs.map((doc) => (doc.data() as CategoryWithMetadata).order);
     return Math.max(...orders) + 1;
   }
 

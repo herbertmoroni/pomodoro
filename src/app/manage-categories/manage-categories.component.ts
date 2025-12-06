@@ -7,12 +7,10 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
-import { CategoryService, Category } from '../services/category.service';
-import {
-  CategoryDialogComponent,
-  CategoryDialogData,
-} from '../category-dialog/category-dialog.component';
+import { CategoryService } from '../services/category.service';
+import { CategoryDialogComponent } from '../category-dialog/category-dialog.component';
 import { LoggerService } from '../services/logger.service';
+import { CategoryWithMetadata, CategoryDialogData } from '../models';
 
 @Component({
   selector: 'app-manage-categories',
@@ -30,7 +28,7 @@ import { LoggerService } from '../services/logger.service';
   styleUrl: './manage-categories.component.css',
 })
 export class ManageCategoriesComponent implements OnInit {
-  categories: Category[] = [];
+  categories: CategoryWithMetadata[] = [];
   loading = true;
 
   constructor(
@@ -82,7 +80,7 @@ export class ManageCategoriesComponent implements OnInit {
     });
   }
 
-  async onEdit(category: Category) {
+  async onEdit(category: CategoryWithMetadata) {
     const dialogRef = this.dialog.open<CategoryDialogComponent, CategoryDialogData>(
       CategoryDialogComponent,
       {
@@ -104,7 +102,7 @@ export class ManageCategoriesComponent implements OnInit {
     });
   }
 
-  async onDelete(category: Category) {
+  async onDelete(category: CategoryWithMetadata) {
     if (!confirm(`Delete "${category.name}"? This cannot be undone.`)) {
       return;
     }
@@ -118,7 +116,7 @@ export class ManageCategoriesComponent implements OnInit {
     }
   }
 
-  async onDrop(event: CdkDragDrop<Category[]>) {
+  async onDrop(event: CdkDragDrop<CategoryWithMetadata[]>) {
     moveItemInArray(this.categories, event.previousIndex, event.currentIndex);
 
     // Update order numbers

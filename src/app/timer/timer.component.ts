@@ -18,33 +18,9 @@ import { CategoryService } from '../services/category.service';
 import { LoggerService } from '../services/logger.service';
 import { TimerStateService } from '../services/timer-state.service';
 import { ManageCategoriesComponent } from '../manage-categories/manage-categories.component';
-import {
-  CategoryDialogComponent,
-  CategoryDialogData,
-} from '../category-dialog/category-dialog.component';
+import { CategoryDialogComponent } from '../category-dialog/category-dialog.component';
 import { User } from 'firebase/auth';
-
-interface Category {
-  id: string;
-  name: string;
-  color: string;
-  icon?: string;
-}
-
-interface PomodoroSession {
-  id: string;
-  categoryId: string;
-  categoryName: string;
-  duration: number;
-  actualDuration: number;
-  startTime: string;
-  endTime: string;
-  completed: boolean;
-  dayOfWeek: number;
-  hourOfDay: number;
-  consecutiveSession: number;
-  followedBreak: boolean;
-}
+import { Category, PomodoroSession, CategoryDialogData } from '../models';
 
 @Component({
   selector: 'app-timer',

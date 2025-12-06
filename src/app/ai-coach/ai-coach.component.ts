@@ -8,18 +8,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { AiChatService, ChatMessage as AiChatMessage } from '../services/ai-chat.service';
+import { AiChatService } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
 import { FirebaseService } from '../services/firebase.service';
 import { SessionService } from '../services/session.service';
 import { ChatService } from '../services/chat.service';
 import { User } from 'firebase/auth';
-
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-  timestamp: Date;
-}
+import { ChatMessage, AiChatMessage } from '../models';
 
 @Component({
   selector: 'app-ai-coach',
