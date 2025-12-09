@@ -122,19 +122,29 @@ export class FirebaseService {
     log('[Firebase] Is mobile device:', isMobileDevice);
 
     try {
-      if (isMobileDevice) {
-        // Mobile device: use redirect
-        log('[Firebase] Using signInWithRedirect for mobile...');
-        log('[Firebase] Session storage keys:', Object.keys(sessionStorage).join(', '));
-        await signInWithRedirect(this.auth, provider);
-        log('[Firebase] signInWithRedirect completed (this may not log due to redirect)');
-        return null;
-      } else {
-        // Desktop: use popup
-        log('[Firebase] Using signInWithPopup for desktop...');
+      // Try popup first (works on most modern mobile browsers)
+      log('[Firebase] Using signInWithPopup...');
+      try {
         const result = await signInWithPopup(this.auth, provider);
         log('[Firebase] Popup sign-in successful:', result.user.email);
         return result.user;
+      } catch (popupError: any) {
+        // If popup fails (blocked or not supported), fall back to redirect
+        log('[Firebase] Popup failed, trying redirect:', popupError.code);
+        
+        if (isMobileDevice && (popupError.code === 'auth/popup-blocked' || popupError.code === 'auth/popup-closed-by-user')) {
+          log('[Firebase] Using signInWithRedirect as fallback...');
+          log('[Firebase] Session storage keys:', Object.keys(sessionStorage).join(', '));
+          
+          // Ensure persistence is set before redirect
+          await setPersistence(this.auth, browserLocalPersistence);
+          log('[Firebase] Persistence confirmed before redirect');
+          
+          await signInWithRedirect(this.auth, provider);
+          log('[Firebase] signInWithRedirect completed (this may not log due to redirect)');
+          return null;
+        }
+        throw popupError;
       }
     } catch (error: any) {
       log('[Firebase] ❌ Sign-in error:', `${error.code}: ${error.message}`);
