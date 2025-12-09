@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { AiChatService } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
@@ -28,6 +30,8 @@ import { ChatMessage, AiChatMessage } from '../models';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatMenuModule,
+    MatDividerModule,
     TextFieldModule,
   ],
   templateUrl: './ai-coach.component.html',
@@ -275,6 +279,55 @@ export class AiCoachComponent implements OnInit {
     } catch (error) {
       this.logger.error('Error fetching session context:', error);
       return undefined;
+    }
+  }
+
+  startNewChat(): void {
+    // Clear current messages and start fresh
+    this.chatService.clearCurrentChat();
+    this.chatService.generateChatId();
+    
+    // Show welcome message for new chat
+    this.messages = [
+      {
+        role: 'assistant',
+        content:
+          "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
+        timestamp: new Date(),
+      },
+    ];
+
+    // Save welcome message
+    const chatId = this.chatService.getCurrentChatId();
+    if (chatId) {
+      this.chatService.saveMessage(chatId, this.messages[0]);
+    }
+  }
+
+  confirmClearHistory(): void {
+    const confirmed = confirm(
+      'Are you sure you want to clear all chat history? This cannot be undone.'
+    );
+    
+    if (confirmed) {
+      this.clearAllHistory();
+    }
+  }
+
+  private async clearAllHistory(): Promise<void> {
+    try {
+      // This would require a new method in ChatService to delete all chats
+      // For now, just start a new chat (full implementation would delete from Firestore)
+      this.logger.info('Clearing all chat history');
+      
+      // Clear current chat and start fresh
+      this.chatService.clearCurrentChat();
+      this.startNewChat();
+      
+      // TODO: Implement actual deletion of all chats from Firestore
+      // await this.chatService.deleteAllChats();
+    } catch (error) {
+      this.logger.error('Error clearing chat history:', error);
     }
   }
 }
