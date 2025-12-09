@@ -30,33 +30,51 @@ export class FirebaseService {
   public authProcessing$: Observable<boolean> = this.authProcessingSubject.asObservable();
 
   constructor() {
+    console.log('[Firebase] Service initializing...');
+    console.log('[Firebase] Current URL:', window.location.href);
+    console.log('[Firebase] User Agent:', navigator.userAgent);
+    
     // Initialize Firebase
     this.app = initializeApp(environment.firebase);
     this.auth = getAuth(this.app);
     this.db = getFirestore(this.app);
 
+    console.log('[Firebase] Firebase initialized');
+
     // Set auth persistence to LOCAL (survives page reloads)
-    setPersistence(this.auth, browserLocalPersistence).catch((error) => {
-      console.error('Error setting auth persistence:', error);
-    });
+    setPersistence(this.auth, browserLocalPersistence)
+      .then(() => {
+        console.log('[Firebase] Persistence set to LOCAL');
+      })
+      .catch((error) => {
+        console.error('[Firebase] Error setting auth persistence:', error);
+      });
 
     // Listen to auth state changes - this handles both popup and redirect
     onAuthStateChanged(this.auth, (user) => {
+      console.log('[Firebase] Auth state changed:', user ? user.email : 'No user');
       this.userSubject.next(user);
     });
 
     // Handle redirect result (runs once on page load after redirect)
+    console.log('[Firebase] Checking for redirect result...');
     getRedirectResult(this.auth)
       .then((result) => {
+        console.log('[Firebase] getRedirectResult completed');
         if (result) {
           // User signed in via redirect
-          console.log('Redirect sign-in successful');
+          console.log('[Firebase] ✅ Redirect sign-in successful!', result.user.email);
+        } else {
+          console.log('[Firebase] No redirect result (normal page load)');
         }
       })
       .catch((error) => {
+        console.log('[Firebase] getRedirectResult error:', error.code, error.message);
         // Only log if it's not the "missing initial state" error
         if (error.code !== 'auth/missing-initial-state') {
-          console.error('Redirect error:', error.code, error.message);
+          console.error('[Firebase] ❌ Redirect error:', error.code, error.message);
+        } else {
+          console.warn('[Firebase] ⚠️ Missing initial state error - this happens on second redirect attempt');
         }
       });
   }
@@ -73,6 +91,8 @@ export class FirebaseService {
 
   // Sign in with Google
   async signInWithGoogle(): Promise<User | null> {
+    console.log('[Firebase] signInWithGoogle called');
+    
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account',
@@ -82,19 +102,26 @@ export class FirebaseService {
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent
     );
+    
+    console.log('[Firebase] Is mobile device:', isMobileDevice);
 
     try {
       if (isMobileDevice) {
         // Mobile device: use redirect
+        console.log('[Firebase] Using signInWithRedirect for mobile...');
+        console.log('[Firebase] Session storage keys before redirect:', Object.keys(sessionStorage));
         await signInWithRedirect(this.auth, provider);
+        console.log('[Firebase] signInWithRedirect completed (this may not log due to redirect)');
         return null;
       } else {
         // Desktop: use popup
+        console.log('[Firebase] Using signInWithPopup for desktop...');
         const result = await signInWithPopup(this.auth, provider);
+        console.log('[Firebase] Popup sign-in successful:', result.user.email);
         return result.user;
       }
     } catch (error: any) {
-      console.error('Sign-in error:', error.code, error.message);
+      console.error('[Firebase] ❌ Sign-in error:', error.code, error.message);
       throw error;
     }
   }
