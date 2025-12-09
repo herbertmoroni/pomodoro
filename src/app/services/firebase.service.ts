@@ -30,75 +30,45 @@ export class FirebaseService {
   public authProcessing$: Observable<boolean> = this.authProcessingSubject.asObservable();
 
   constructor() {
-    const log = (msg: string, data?: any) => {
-      console.log(msg, data || '');
-      const logs = JSON.parse(localStorage.getItem('firebase_debug_logs') || '[]');
-      logs.push({ time: new Date().toISOString(), msg, data });
-      localStorage.setItem('firebase_debug_logs', JSON.stringify(logs.slice(-20)));
-    };
-
-    log('[Firebase] Service initializing...');
-    log('[Firebase] Current URL:', window.location.href);
-    log('[Firebase] User Agent:', navigator.userAgent);
-    
     // Initialize Firebase
     this.app = initializeApp(environment.firebase);
     this.auth = getAuth(this.app);
     this.db = getFirestore(this.app);
 
-    log('[Firebase] Firebase initialized');
-
-    // Enable Firestore offline persistence with tab sync
+    // Enable Firestore offline persistence
+    // This caches data locally and syncs when back online
     enableIndexedDbPersistence(this.db)
-      .then(() => {
-        log('[Firebase] Firestore offline persistence enabled');
-      })
       .catch((error) => {
         if (error.code === 'failed-precondition') {
-          log('[Firebase] Multiple tabs open, persistence only enabled in one tab');
+          console.warn('[Firebase] Multiple tabs open, persistence only enabled in one tab');
         } else if (error.code === 'unimplemented') {
-          log('[Firebase] Browser does not support persistence');
-        } else {
-          log('[Firebase] Error enabling Firestore persistence:', error.message);
+          console.warn('[Firebase] Browser does not support offline persistence');
         }
       });
 
-    // Set auth persistence to LOCAL (survives page reloads)
+    // Set auth persistence to LOCAL (survives page reloads and redirects)
     setPersistence(this.auth, browserLocalPersistence)
-      .then(() => {
-        log('[Firebase] Persistence set to LOCAL');
-      })
       .catch((error) => {
-        log('[Firebase] Error setting auth persistence:', error.message);
+        console.error('[Firebase] Error setting auth persistence:', error);
       });
 
-    // Listen to auth state changes - this handles both popup and redirect
+    // Listen to auth state changes
     onAuthStateChanged(this.auth, (user) => {
-      log('[Firebase] Auth state changed:', user ? user.email : 'No user');
       this.userSubject.next(user);
     });
 
     // Handle redirect result (runs once on page load after redirect)
-    log('[Firebase] Checking for redirect result...');
     getRedirectResult(this.auth)
       .then((result) => {
-        log('[Firebase] getRedirectResult completed');
         if (result) {
-          // User signed in via redirect
-          log('[Firebase] ✅ Redirect sign-in successful!', result.user.email);
-          alert('Sign-in successful! Check console for: localStorage.getItem("firebase_debug_logs")');
-        } else {
-          log('[Firebase] No redirect result (normal page load)');
+          // User successfully signed in via redirect
+          console.log('[Firebase] Redirect sign-in successful:', result.user.email);
         }
       })
       .catch((error) => {
-        log('[Firebase] getRedirectResult error:', `${error.code}: ${error.message}`);
-        // Only log if it's not the "missing initial state" error
+        // Ignore "missing initial state" error (happens on normal page loads)
         if (error.code !== 'auth/missing-initial-state') {
-          log('[Firebase] ❌ Redirect error:', `${error.code}: ${error.message}`);
-          alert(`Redirect error: ${error.code} - Check console for: localStorage.getItem("firebase_debug_logs")`);
-        } else {
-          log('[Firebase] ⚠️ Missing initial state error');
+          console.error('[Firebase] Redirect error:', error);
         }
       });
   }
@@ -113,57 +83,35 @@ export class FirebaseService {
     return this.db;
   }
 
-  // Sign in with Google
+  // Sign in with Google (popup on desktop, redirect fallback on mobile)
   async signInWithGoogle(): Promise<User | null> {
-    const log = (msg: string, data?: any) => {
-      console.log(msg, data || '');
-      const logs = JSON.parse(localStorage.getItem('firebase_debug_logs') || '[]');
-      logs.push({ time: new Date().toISOString(), msg, data });
-      localStorage.setItem('firebase_debug_logs', JSON.stringify(logs.slice(-20)));
-    };
-
-    log('[Firebase] signInWithGoogle called');
-    
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
       prompt: 'select_account',
     });
 
-    // Detect mobile by user agent (not window size)
+    // Detect mobile by user agent
     const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
       navigator.userAgent
     );
-    
-    log('[Firebase] Is mobile device:', isMobileDevice);
 
     try {
       // Try popup first (works on most modern mobile browsers)
-      log('[Firebase] Using signInWithPopup...');
       try {
         const result = await signInWithPopup(this.auth, provider);
-        log('[Firebase] Popup sign-in successful:', result.user.email);
         return result.user;
       } catch (popupError: any) {
-        // If popup fails (blocked or not supported), fall back to redirect
-        log('[Firebase] Popup failed, trying redirect:', popupError.code);
-        
+        // If popup fails on mobile, fall back to redirect
         if (isMobileDevice && (popupError.code === 'auth/popup-blocked' || popupError.code === 'auth/popup-closed-by-user')) {
-          log('[Firebase] Using signInWithRedirect as fallback...');
-          log('[Firebase] Session storage keys:', Object.keys(sessionStorage).join(', '));
-          
           // Ensure persistence is set before redirect
           await setPersistence(this.auth, browserLocalPersistence);
-          log('[Firebase] Persistence confirmed before redirect');
-          
           await signInWithRedirect(this.auth, provider);
-          log('[Firebase] signInWithRedirect completed (this may not log due to redirect)');
-          return null;
+          return null; // Will complete after redirect
         }
         throw popupError;
       }
     } catch (error: any) {
-      log('[Firebase] ❌ Sign-in error:', `${error.code}: ${error.message}`);
-      alert(`Sign-in error: ${error.code} - Check console for: localStorage.getItem("firebase_debug_logs")`);
+      console.error('[Firebase] Sign-in error:', error);
       throw error;
     }
   }
