@@ -12,7 +12,7 @@ import {
   setPersistence,
   browserLocalPersistence,
 } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -47,6 +47,21 @@ export class FirebaseService {
     this.db = getFirestore(this.app);
 
     log('[Firebase] Firebase initialized');
+
+    // Enable Firestore offline persistence with tab sync
+    enableIndexedDbPersistence(this.db)
+      .then(() => {
+        log('[Firebase] Firestore offline persistence enabled');
+      })
+      .catch((error) => {
+        if (error.code === 'failed-precondition') {
+          log('[Firebase] Multiple tabs open, persistence only enabled in one tab');
+        } else if (error.code === 'unimplemented') {
+          log('[Firebase] Browser does not support persistence');
+        } else {
+          log('[Firebase] Error enabling Firestore persistence:', error.message);
+        }
+      });
 
     // Set auth persistence to LOCAL (survives page reloads)
     setPersistence(this.auth, browserLocalPersistence)
