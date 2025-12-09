@@ -6,7 +6,7 @@ export const environment = {
   production: true,
   firebase: {
     apiKey: 'AIzaSyBKnrcZbmpF15HGEOpWhQgYAE14jMz2wHE',
-    authDomain: 'focusgo.app',
+    authDomain: 'focusgo-6450e.firebaseapp.com',
     projectId: 'focusgo-6450e',
     storageBucket: 'focusgo-6450e.firebasestorage.app',
     messagingSenderId: '844992821880',
