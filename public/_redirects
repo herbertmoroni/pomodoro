@@ -1,0 +1,6 @@
+# Proxy Firebase Auth handler to Firebase hosting
+/__/auth/* https://focusgo-6450e.firebaseapp.com/__/auth/:splat 200
+/__/firebase/* https://focusgo-6450e.firebaseapp.com/__/firebase/:splat 200
+
+# SPA fallback - must be last
+/*    /index.html   200
