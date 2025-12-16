@@ -93,7 +93,7 @@ export class AppComponent implements OnInit {
       'Clear All Chat History',
       'This will delete all your AI Coach conversations. This action cannot be undone. Continue?'
     );
-    
+
     if (confirmed) {
       this.chatService.clearCurrentChat();
       this.router.navigate(['/coach']);

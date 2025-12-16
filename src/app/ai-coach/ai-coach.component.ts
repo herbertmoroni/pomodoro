@@ -282,7 +282,7 @@ export class AiCoachComponent implements OnInit {
     // Clear current messages and start fresh
     this.chatService.clearCurrentChat();
     this.chatService.generateChatId();
-    
+
     // Show welcome message for new chat
     this.messages = [
       {
@@ -304,7 +304,7 @@ export class AiCoachComponent implements OnInit {
     const confirmed = confirm(
       'Are you sure you want to clear all chat history? This cannot be undone.'
     );
-    
+
     if (confirmed) {
       this.clearAllHistory();
     }
@@ -315,11 +315,11 @@ export class AiCoachComponent implements OnInit {
       // This would require a new method in ChatService to delete all chats
       // For now, just start a new chat (full implementation would delete from Firestore)
       this.logger.log('Clearing all chat history');
-      
+
       // Clear current chat and start fresh
       this.chatService.clearCurrentChat();
       this.startNewChat();
-      
+
       // TODO: Implement actual deletion of all chats from Firestore
       // await this.chatService.deleteAllChats();
     } catch (error) {
