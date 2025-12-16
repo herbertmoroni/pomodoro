@@ -1,4 +1,28 @@
 <div class="coach-container">
+  <div class="chat-header">
+    <h2>AI Coach</h2>
+    @if (currentUser && !currentUser.isAnonymous) {
+      <div class="header-actions">
+        <button
+          mat-icon-button
+          (click)="newChat()"
+          matTooltip="Start new chat"
+          aria-label="Start new chat"
+        >
+          <mat-icon>add_comment</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          (click)="clearHistory()"
+          matTooltip="Clear chat history"
+          aria-label="Clear chat history"
+        >
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    }
+  </div>
+
   <div class="messages-container">
     <div class="messages-wrapper">
       @for (message of messages; track message.timestamp) {

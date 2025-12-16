@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { AiChatService } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
@@ -28,6 +29,7 @@ import { ChatMessage, AiChatMessage } from '../models';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     TextFieldModule,
   ],
   templateUrl: './ai-coach.component.html',
@@ -278,7 +280,7 @@ export class AiCoachComponent implements OnInit {
     }
   }
 
-  startNewChat(): void {
+  async newChat(): Promise<void> {
     // Clear current messages and start fresh
     this.chatService.clearCurrentChat();
     this.chatService.generateChatId();
@@ -293,37 +295,33 @@ export class AiCoachComponent implements OnInit {
       },
     ];
 
-    // Save welcome message
+    // Save welcome message to Firestore
     const chatId = this.chatService.getCurrentChatId();
     if (chatId) {
-      this.chatService.saveMessage(chatId, this.messages[0]);
+      await this.chatService.saveMessage(chatId, this.messages[0]);
     }
+
+    this.logger.log('Started new chat');
   }
 
-  confirmClearHistory(): void {
+  async clearHistory(): Promise<void> {
     const confirmed = confirm(
-      'Are you sure you want to clear all chat history? This cannot be undone.'
+      'Clear chat history?\n\nThis will clear the current conversation. This cannot be undone.'
     );
 
     if (confirmed) {
-      this.clearAllHistory();
-    }
-  }
+      try {
+        this.logger.log('Clearing chat history');
 
-  private async clearAllHistory(): Promise<void> {
-    try {
-      // This would require a new method in ChatService to delete all chats
-      // For now, just start a new chat (full implementation would delete from Firestore)
-      this.logger.log('Clearing all chat history');
+        // Clear current chat and start fresh
+        this.chatService.clearCurrentChat();
+        await this.newChat();
 
-      // Clear current chat and start fresh
-      this.chatService.clearCurrentChat();
-      this.startNewChat();
-
-      // TODO: Implement actual deletion of all chats from Firestore
-      // await this.chatService.deleteAllChats();
-    } catch (error) {
-      this.logger.error('Error clearing chat history:', error);
+        // TODO: Implement actual deletion of all chats from Firestore
+        // await this.chatService.deleteAllChats();
+      } catch (error) {
+        this.logger.error('Error clearing chat history:', error);
+      }
     }
   }
 }
