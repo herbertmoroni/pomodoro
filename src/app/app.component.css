@@ -50,3 +50,7 @@ mat-toolbar {
   align-items: center;
   gap: var(--spacing-sm);
 }
+
+.coach-menu-button {
+  margin-left: -8px;
+}

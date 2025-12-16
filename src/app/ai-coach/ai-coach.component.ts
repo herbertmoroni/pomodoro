@@ -7,8 +7,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatDividerModule } from '@angular/material/divider';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { AiChatService } from '../services/ai-chat.service';
 import { LoggerService } from '../services/logger.service';
@@ -30,8 +28,6 @@ import { ChatMessage, AiChatMessage } from '../models';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatMenuModule,
-    MatDividerModule,
     TextFieldModule,
   ],
   templateUrl: './ai-coach.component.html',
@@ -318,7 +314,7 @@ export class AiCoachComponent implements OnInit {
     try {
       // This would require a new method in ChatService to delete all chats
       // For now, just start a new chat (full implementation would delete from Firestore)
-      this.logger.info('Clearing all chat history');
+      this.logger.log('Clearing all chat history');
       
       // Clear current chat and start fresh
       this.chatService.clearCurrentChat();
