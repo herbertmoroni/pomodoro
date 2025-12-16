@@ -1,29 +1,4 @@
 <div class="coach-container">
-  <div class="chat-header">
-    <h2>AI Coach</h2>
-    @if (currentUser && !currentUser.isAnonymous) {
-      <button mat-icon-button [matMenuTriggerFor]="chatMenu" aria-label="Chat options">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-    }
-  </div>
-
-  <mat-menu #chatMenu="matMenu">
-    <button mat-menu-item (click)="startNewChat()">
-      <mat-icon>add</mat-icon>
-      <span>New Chat</span>
-    </button>
-    <button mat-menu-item (click)="confirmClearHistory()">
-      <mat-icon>delete_outline</mat-icon>
-      <span>Clear All History</span>
-    </button>
-    <mat-divider></mat-divider>
-    <button mat-menu-item disabled>
-      <mat-icon>visibility</mat-icon>
-      <span>View Memory (Coming Soon)</span>
-    </button>
-  </mat-menu>
-
   <div class="messages-container">
     <div class="messages-wrapper">
       @for (message of messages; track message.timestamp) {
