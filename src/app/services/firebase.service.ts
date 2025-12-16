@@ -37,20 +37,18 @@ export class FirebaseService {
 
     // Enable Firestore offline persistence
     // This caches data locally and syncs when back online
-    enableIndexedDbPersistence(this.db)
-      .catch((error) => {
-        if (error.code === 'failed-precondition') {
-          console.warn('[Firebase] Multiple tabs open, persistence only enabled in one tab');
-        } else if (error.code === 'unimplemented') {
-          console.warn('[Firebase] Browser does not support offline persistence');
-        }
-      });
+    enableIndexedDbPersistence(this.db).catch((error) => {
+      if (error.code === 'failed-precondition') {
+        console.warn('[Firebase] Multiple tabs open, persistence only enabled in one tab');
+      } else if (error.code === 'unimplemented') {
+        console.warn('[Firebase] Browser does not support offline persistence');
+      }
+    });
 
     // Set auth persistence to LOCAL (survives page reloads and redirects)
-    setPersistence(this.auth, browserLocalPersistence)
-      .catch((error) => {
-        console.error('[Firebase] Error setting auth persistence:', error);
-      });
+    setPersistence(this.auth, browserLocalPersistence).catch((error) => {
+      console.error('[Firebase] Error setting auth persistence:', error);
+    });
 
     // Listen to auth state changes
     onAuthStateChanged(this.auth, (user) => {
@@ -102,7 +100,11 @@ export class FirebaseService {
         return result.user;
       } catch (popupError: any) {
         // If popup fails on mobile, fall back to redirect
-        if (isMobileDevice && (popupError.code === 'auth/popup-blocked' || popupError.code === 'auth/popup-closed-by-user')) {
+        if (
+          isMobileDevice &&
+          (popupError.code === 'auth/popup-blocked' ||
+            popupError.code === 'auth/popup-closed-by-user')
+        ) {
           // Ensure persistence is set before redirect
           await setPersistence(this.auth, browserLocalPersistence);
           await signInWithRedirect(this.auth, provider);
