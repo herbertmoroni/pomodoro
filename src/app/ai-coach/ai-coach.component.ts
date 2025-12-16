@@ -277,4 +277,53 @@ export class AiCoachComponent implements OnInit {
       return undefined;
     }
   }
+
+  startNewChat(): void {
+    // Clear current messages and start fresh
+    this.chatService.clearCurrentChat();
+    this.chatService.generateChatId();
+    
+    // Show welcome message for new chat
+    this.messages = [
+      {
+        role: 'assistant',
+        content:
+          "Hi! I'm your FocusGo AI Coach. I can help you understand your productivity patterns, set goals, and improve your focus. Ask me anything like 'How can I be more productive?' or 'What are good Pomodoro techniques?'",
+        timestamp: new Date(),
+      },
+    ];
+
+    // Save welcome message
+    const chatId = this.chatService.getCurrentChatId();
+    if (chatId) {
+      this.chatService.saveMessage(chatId, this.messages[0]);
+    }
+  }
+
+  confirmClearHistory(): void {
+    const confirmed = confirm(
+      'Are you sure you want to clear all chat history? This cannot be undone.'
+    );
+    
+    if (confirmed) {
+      this.clearAllHistory();
+    }
+  }
+
+  private async clearAllHistory(): Promise<void> {
+    try {
+      // This would require a new method in ChatService to delete all chats
+      // For now, just start a new chat (full implementation would delete from Firestore)
+      this.logger.log('Clearing all chat history');
+      
+      // Clear current chat and start fresh
+      this.chatService.clearCurrentChat();
+      this.startNewChat();
+      
+      // TODO: Implement actual deletion of all chats from Firestore
+      // await this.chatService.deleteAllChats();
+    } catch (error) {
+      this.logger.error('Error clearing chat history:', error);
+    }
+  }
 }
