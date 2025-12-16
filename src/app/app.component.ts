@@ -5,14 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatDialog } from '@angular/material/dialog';
-import { RouterLink, RouterOutlet, RouterLinkActive, Router } from '@angular/router';
+import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { FirebaseService } from './services/firebase.service';
 import { LoggerService } from './services/logger.service';
 import { TimerStateService } from './services/timer-state.service';
 import { NotificationService } from './services/notification.service';
-import { ChatService } from './services/chat.service';
 import { User } from 'firebase/auth';
 
 @Component({
@@ -25,7 +22,6 @@ import { User } from 'firebase/auth';
     MatToolbarModule,
     MatMenuModule,
     MatTooltipModule,
-    MatDividerModule,
     RouterLink,
     RouterOutlet,
     RouterLinkActive,
@@ -42,10 +38,7 @@ export class AppComponent implements OnInit {
     private firebaseService: FirebaseService,
     private notification: NotificationService,
     private logger: LoggerService,
-    private timerStateService: TimerStateService,
-    private chatService: ChatService,
-    private dialog: MatDialog,
-    private router: Router
+    private timerStateService: TimerStateService
   ) {}
 
   ngOnInit() {
@@ -79,33 +72,5 @@ export class AppComponent implements OnInit {
   async signOut() {
     await this.firebaseService.signOut();
     this.notification.info('Signed out');
-  }
-
-  startNewChat() {
-    // Navigate to coach route and trigger new chat
-    this.chatService.clearCurrentChat();
-    this.router.navigate(['/coach']);
-    this.notification.info('Started new chat');
-  }
-
-  async clearChatHistory() {
-    const confirmed = await this.showConfirmDialog(
-      'Clear All Chat History',
-      'This will delete all your AI Coach conversations. This action cannot be undone. Continue?'
-    );
-
-    if (confirmed) {
-      this.chatService.clearCurrentChat();
-      this.router.navigate(['/coach']);
-      this.notification.info('Chat history cleared');
-      // TODO: Implement actual deletion of all chats from Firestore
-    }
-  }
-
-  private showConfirmDialog(title: string, message: string): Promise<boolean> {
-    return new Promise((resolve) => {
-      const result = confirm(`${title}\n\n${message}`);
-      resolve(result);
-    });
   }
 }

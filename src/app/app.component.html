@@ -30,32 +30,6 @@
     <mat-icon>support_agent</mat-icon>
     AI Coach
   </button>
-  @if (currentUser && !currentUser.isAnonymous) {
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="coachMenu"
-      [disabled]="isTimerRunning"
-      [matTooltip]="isTimerRunning ? 'Pause timer for coach options' : 'AI Coach options'"
-      class="coach-menu-button"
-    >
-      <mat-icon>more_vert</mat-icon>
-    </button>
-    <mat-menu #coachMenu="matMenu">
-      <button mat-menu-item (click)="startNewChat()">
-        <mat-icon>add</mat-icon>
-        <span>New Chat</span>
-      </button>
-      <button mat-menu-item (click)="clearChatHistory()">
-        <mat-icon>delete_outline</mat-icon>
-        <span>Clear All History</span>
-      </button>
-      <mat-divider></mat-divider>
-      <button mat-menu-item disabled>
-        <mat-icon>visibility</mat-icon>
-        <span>View Memory (Coming Soon)</span>
-      </button>
-    </mat-menu>
-  }
 
   @if (!currentUser) {
     <button mat-button class="sign-in-button" (click)="signIn()" [disabled]="isAuthProcessing">
