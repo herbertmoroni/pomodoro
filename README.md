@@ -1,147 +1,117 @@
-# Pomodoro Focus Tracker
+# FocusGo
 
-Personal productivity tool built to explore Angular + AWS Amplify architecture 
-while solving a real problem: understanding where my focused time actually goes.
+A personal focus timer that uses AI to help you understand where your time actually goes.
 
 🌐 **Live Demo:** [https://focusgo.app](https://focusgo.app)
 
-## Why This Project?
+## Overview
 
-I built this as both a personal productivity tool and a learning laboratory while writing my 7th technical book, "AI Security for .NET Developers."
+The Pomodoro Technique is a real, widely-used method for structuring focused work: work in fixed intervals, take a break, repeat. But a timer on its own doesn't tell you anything — it just counts down and resets.
 
-**Current Status:**
-- ✅ Core Pomodoro timer functionality
-- ✅ **Flexible timer duration** (click to edit, supports shorthand like "5" → "5:00")
-- ✅ **AI Coach** - Conversational productivity insights powered by GitHub Models
-- ✅ Category/tag system for organizing sessions
-- ✅ **Custom category management** (add/edit/delete/drag-to-reorder)
-- ✅ Session tracking with comprehensive metadata
-- ✅ **Timer state persistence** - Resume exactly where you left off
-- ✅ **Chat history persistence** - AI Coach remembers your conversations
-- ✅ Progressive Web App (works offline, installs on devices)
-- ✅ Material Design UI with responsive toolbar
-- ✅ AWS Amplify serverless deployment
-- ✅ Firebase Authentication (Google sign-in)
-- ✅ Cloud sync with Firestore
-- ✅ User notifications system
-- 🔄 **Next: Analytics dashboard and semantic memory for AI Coach**
+FocusGo takes the Pomodoro technique and adds two things on top of it: **categorization** and **AI analysis**.
+
+Every session is tagged with a category — Work, Study, Writing, whatever you define. The tag is the whole point: it's what turns "I did some pomodoros today" into "you're spending 70% of your focus time on Work, and your Study sessions have a 40% completion rate." Without the tag, there's nothing for the AI to reason about beyond raw minutes.
+
+On top of that, an AI coach reads your session history — durations, completion, time of day, day of week, whether you took a break, which category — and talks with you about it: what patterns show up, when you're actually productive versus just pushing through, and what to try differently.
+
+## How It Works
+
+- Every session is logged with metadata built for analysis, not just a timestamp: category, planned vs. actual duration, day of week, hour of day, completed vs. abandoned, whether it followed a break, and its position in a streak of consecutive sessions.
+- Categories (tags) are fully user-defined — add, rename, delete, drag-to-reorder. They're the primary dimension the AI groups and compares by.
+- An AI Coach chat reads your last 30 days of session data, computes stats (completion rates, time-of-day patterns, category breakdowns), and answers questions like "how was my week?" or "when should I schedule deep work?" in plain conversation.
+- Chat history persists per-user in Firestore, so the coach's conversations carry over across visits instead of starting from zero each time.
+- Session data and categories sync to the cloud per-user (Firebase Auth + Firestore), so your history follows you across devices. The app also works offline and installs as a PWA.
+
+**Example:**
+
+```
+You: How was my week?
+
+Coach: Solid week! You completed 32 focus sessions totaling 13 hours:
+  - Work: 18 sessions (56%) - 7.5 hours
+  - Study: 10 sessions (31%) - 4.2 hours
+  - Personal: 4 sessions (13%) - 1.3 hours
+
+Your completion rate was 85% - above your usual 78%. Tuesday and
+Thursday mornings were especially productive. You're doing best when
+starting work by 9 AM — consider protecting that morning time.
+```
 
 ## Tech Stack
 
-- **Frontend:** Angular 18 + Angular Material
-- **Authentication:** Firebase Auth (Google OAuth)
-- **Database:** Firebase Firestore
-- **AI:** GitHub Models API (GPT-4o-mini)
-- **Hosting:** AWS Amplify (serverless)
+- **Frontend:** Angular 18 + Angular Material (TypeScript)
+- **Auth & Database:** Firebase Authentication (Google sign-in) + Firestore
+- **AI:** GitHub Models API (GPT-4o-mini), an OpenAI-compatible chat completions endpoint
+- **PWA:** Angular Service Worker (offline support, installable)
 
-## What I'm Learning
+The app has no hosting-specific dependencies — see [Deployment](#deployment) below.
 
-### Amplify Architecture
-This project let me explore AWS Amplify's serverless architecture with Angular:
-- Amplify Hosting for static Angular apps
-- CI/CD pipeline integration
-- Environment-based configuration
-- Cost-effective hosting for personal projects
-- Firebase Crashlytics for tracking user errors in production (authentication failures, Firestore errors, etc.)
+## Setup
 
-### AI Integration (Implemented)
-The AI Coach feature is live and provides:
-- **Conversational insights** about your productivity patterns
-- **Session data analysis** with stats on completion rates, best times, categories
-- **Chat history persistence** across sessions
-- **Context-aware responses** using your last 30 days of Pomodoro data
-- Uses GitHub Models API (GPT-4o-mini) for cost-effective AI
+### 1. Clone and install
 
-**What's Working:**
-- ✅ Real-time chat with session data context
-- ✅ Firestore persistence for chat history
-- ✅ Error handling and graceful degradation
-- ✅ Mobile-responsive chat interface
+```bash
+git clone <this-repo>
+cd pomodoro
+npm install
+```
 
-**Next Steps:**
-- Semantic memory extraction (Level 2 RAG)
-- Tool calling for dynamic data queries (Level 3)
-- Personal productivity experiments tracking
+### 2. Set up Firebase
 
+You need your own Firebase project (Auth + Firestore) — this app doesn't ship with a shared backend. Follow [docs/FIREBASE-SETUP.md](./docs/FIREBASE-SETUP.md) for the step-by-step console setup, then copy your Firestore rules from `firestore.rules`.
 
-## Data Structure & AI Integration
+### 3. Configure local secrets
 
-> **📋 Detailed AI Integration Plan:** See [AI-ROADMAP.md](./AI-ROADMAP.md) for comprehensive AI features, data structure design, and implementation strategy.
+```bash
+cp src/environments/environment.example.ts src/environments/environment.local.ts
+```
 
-The app tracks detailed session data (duration, completion, timing patterns, breaks) designed for future AI analysis to provide personalized productivity insights and recommendations.
+Edit `environment.local.ts`:
+- Paste in your Firebase config (from the Firebase Console → Project Settings).
+- Add a GitHub Personal Access Token for AI features: [github.com/settings/tokens](https://github.com/settings/tokens) → "Generate new token (classic)" → no special scopes needed for GitHub Models.
 
-## Setup & Configuration
+This file is gitignored and never committed. The app runs fine without the PAT — AI features are just disabled.
 
-### Local Development Setup
+### 4. Run it
 
-The app uses a safe configuration pattern that prevents accidentally committing secrets:
+```bash
+npm start
+```
 
-1. **Copy the example file to create your local secrets:**
-   ```bash
-   cp src/environments/environment.example.ts src/environments/environment.local.ts
-   ```
+## Deployment
 
-2. **Get your GitHub Personal Access Token:**
-   - Go to https://github.com/settings/tokens
-   - Click "Generate new token (classic)"
-   - No special scopes needed for GitHub Models
-   - Copy the token (starts with `github_pat_`)
+This is a plain Angular app — `npm run build` outputs static files to `dist/`, deployable to any static host. Nothing in the code is tied to a specific cloud provider; Firebase (auth/data) and GitHub Models (AI) are the only external services, and neither depends on where the frontend is hosted.
 
-3. **Add your PAT to the local file:**
-   - Edit `environment.local.ts` and replace `github_pat_YOUR_TOKEN_HERE` with your actual token
-   - This file is gitignored and will **never be committed**
+```bash
+npm run build
+```
 
-**Safety layers:**
-- ✅ Main environment files (`environment.ts`, `environment.prod.ts`) can be safely committed
-- ✅ Your secret PAT is in `environment.local.ts` which is gitignored
-- ✅ App works without PAT (AI features will be disabled)
-- ✅ Impossible to accidentally commit your PAT
+Pick any static host — AWS Amplify, Netlify, Vercel, Firebase Hosting, Cloudflare Pages, GitHub Pages all work. The only two things any of them need to do:
+1. Serve the contents of `dist/` (or your build output folder).
+2. Provide your GitHub PAT as an environment variable at build time, injected into the production environment config the same way `environment.local.ts` does locally.
 
-### Production Deployment (AWS Amplify)
+Whichever host you pick, also add its domain to Firebase Console → Authentication → Settings → Authorized domains, or Google sign-in will fail on that domain.
 
-For production, set the GitHub PAT as an environment variable in AWS Amplify:
+## Useful Links
 
-1. Go to AWS Amplify Console → Your App
-2. Navigate to **App Settings** → **Environment variables**
-3. Add variable: `GITHUB_PAT` = `your_token_here`
-4. Redeploy the app
+- [Angular Documentation](https://angular.dev)
+- [Angular Material](https://material.angular.io)
+- [Firebase Documentation](https://firebase.google.com/docs)
+- [GitHub Models](https://docs.github.com/en/github-models)
 
-(Environment variable injection for Angular apps in Amplify will be implemented when AI features are ready for production)
+## Future Work
 
-## SEO & Growth Roadmap
+- **Tool calling instead of always preloading 30 days of data.** Right now every analytical message sends the full 30-day summary regardless of relevance; letting the AI request specific data (a category, a date range) on demand would cut token usage and enable more precise queries.
+- **Semantic memory across conversations.** The coach currently only sees recent chat history plus session stats — it doesn't retain goals or experiments you've mentioned weeks ago. Extracting and storing compact semantic memory (profile, active experiments, key insights) would let it reference long-term context without resending entire chat threads.
+- **Skip session-data injection for non-analytical messages.** Greetings and acknowledgments currently still trigger a full data fetch; detecting query intent first would reduce unnecessary cost and latency.
+- **Real-world validation of AI insight quality.** The coaching patterns look reasonable qualitatively but haven't been validated against months of real usage across many users — whether the insights hold up at scale is untested.
 
-### Short Term (Easy Wins)
-- Add Schema.org structured data (JSON-LD) for SoftwareApplication
-- Create a blog section with productivity tips
-- Add an about/features page (more indexable content)
-- Implement breadcrumbs when you add more pages
+Full design rationale and detailed comparison against a standard LLM-app architecture are in [docs/AI-ROADMAP.md](./docs/AI-ROADMAP.md) and [docs/AI-ARCHITECTURE-COMPARISON.md](./docs/AI-ARCHITECTURE-COMPARISON.md).
 
-### Long Term
-- Content marketing - Write articles about productivity
-- Backlinks - Submit to PWA directories
-- Performance - Keep Lighthouse scores high (already good with PWA)
+## AI Disclosure
 
-## About
-
-Built by Herbert Moroni Gois while writing "AI Security for .NET Developers".
-
-**Background:**
-- Senior Software Engineer with 20+ years .NET/Angular experience
-- Published author of 6 technical books
-- Former CTO at 4Sec Global
-
-**Connect:**
-- [LinkedIn](https://www.linkedin.com/in/herbertmoroni/)
-- [Medium](https://medium.com/@herbertmoroni)
-- [Amazon Author Page](https://www.amazon.com/stores/Herbert-Moroni/author/B0BCBWB3V2?ref=sr_ntt_srch_lnk_6&qid=1763746106&sr=8-6&isDramIntegrated=true&shoppingPortalEnabled=true&ccs_id=672d33bb-79c9-4b4b-b8bf-471d6048d733) (search "Herbert Moroni")
-
-## License
-
-This project is open source and available for personal and commercial use.
-
-## Acknowledgments
-
-- Pomodoro Technique® by Francesco Cirillo
-- Sound effects from Mixkit
-- Icons and UI components from Angular Material
-
+AI was used as a coding assistant on this project, under my direction and review:
+- Angular/Firebase integration code and UI styling.
+- Architecture research and the comparison in AI-ARCHITECTURE-COMPARISON.md.
+- AI Coach prompt design and chat integration logic.
+</content>
