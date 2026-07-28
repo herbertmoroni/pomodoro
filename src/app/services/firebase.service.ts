@@ -16,6 +16,11 @@ import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore';
 import { environment } from '../../environments/environment';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+// Module-level guard: the underlying Firestore instance is a singleton keyed by
+// the Firebase app, so persistence must only be enabled once per JS realm even
+// though Angular may construct this service more than once (e.g. across tests).
+let persistenceEnabled = false;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -37,13 +42,16 @@ export class FirebaseService {
 
     // Enable Firestore offline persistence
     // This caches data locally and syncs when back online
-    enableIndexedDbPersistence(this.db).catch((error) => {
-      if (error.code === 'failed-precondition') {
-        console.warn('[Firebase] Multiple tabs open, persistence only enabled in one tab');
-      } else if (error.code === 'unimplemented') {
-        console.warn('[Firebase] Browser does not support offline persistence');
-      }
-    });
+    if (!persistenceEnabled) {
+      persistenceEnabled = true;
+      enableIndexedDbPersistence(this.db).catch((error) => {
+        if (error.code === 'failed-precondition') {
+          console.warn('[Firebase] Multiple tabs open, persistence only enabled in one tab');
+        } else if (error.code === 'unimplemented') {
+          console.warn('[Firebase] Browser does not support offline persistence');
+        }
+      });
+    }
 
     // Set auth persistence to LOCAL (survives page reloads and redirects)
     setPersistence(this.auth, browserLocalPersistence).catch((error) => {
