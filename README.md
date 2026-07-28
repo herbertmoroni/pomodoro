@@ -14,7 +14,7 @@ Every session is tagged with a category — Work, Study, Writing, whatever you d
 
 On top of that, an AI coach reads your session history — durations, completion, time of day, day of week, whether you took a break, which category — and talks with you about it: what patterns show up, when you're actually productive versus just pushing through, and what to try differently.
 
-![CDR Map](docs\pomodoro-home.png)
+![Pomodoro](docs/pomodoro-home.png)
 
 ## How It Works
 
