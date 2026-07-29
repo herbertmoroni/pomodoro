@@ -116,4 +116,3 @@ AI was used as a coding assistant on this project, under my direction and review
 - Angular/Firebase integration code and UI styling.
 - Architecture research and the comparison in AI-ARCHITECTURE-COMPARISON.md.
 - AI Coach prompt design and chat integration logic.
-</content>
