@@ -53,7 +53,7 @@ The app has no hosting-specific dependencies — see [Deployment](#deployment) b
 ### 1. Clone and install
 
 ```bash
-git clone <this-repo>
+git clone `https://github.com/herbertmoroni/pomodoro.git`
 cd pomodoro
 npm install
 ```
@@ -96,9 +96,7 @@ Whichever host you pick, also add its domain to Firebase Console → Authenticat
 
 ## Useful Links
 
-- [Angular Documentation](https://angular.dev)
 - [Angular Material](https://material.angular.io)
-- [Firebase Documentation](https://firebase.google.com/docs)
 - [GitHub Models](https://docs.github.com/en/github-models)
 
 ## Future Work
