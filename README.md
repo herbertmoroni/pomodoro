@@ -53,7 +53,7 @@ The app has no hosting-specific dependencies — see [Deployment](#deployment) b
 ### 1. Clone and install
 
 ```bash
-git clone `https://github.com/herbertmoroni/pomodoro.git`
+git clone https://github.com/herbertmoroni/pomodoro.git
 cd pomodoro
 npm install
 ```
